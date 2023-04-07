@@ -4,7 +4,9 @@ import { reconstruct, ChangeObj } from 'renderer/tracking/utils';
 import { Link } from 'react-router-dom';
 
 export default function Replay() {
-  const restoreHistory = JSON.parse(window.electron.store.get('history'));
+  const restoreHistory = window.electron.store.get('history')
+    ? JSON.parse(window.electron.store.get('history'))
+    : [];
   const [history, setHistory] = useState<ChangeObj[]>(restoreHistory);
 
   const maxStep = history.length;

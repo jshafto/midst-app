@@ -4,8 +4,10 @@ import { Link } from 'react-router-dom';
 import { compareStrings, ChangeObj } from '../../tracking/utils';
 
 export default function Editor() {
-  const restoreText = window.electron.store.get('poem');
-  const restoreHistory = JSON.parse(window.electron.store.get('history'));
+  const restoreText = window.electron.store.get('poem') || '';
+  const restoreHistory = window.electron.store.get('history')
+    ? JSON.parse(window.electron.store.get('history'))
+    : [];
   const [text, setText] = useState(restoreText);
   const [history, setHistory] = useState<ChangeObj[]>(restoreHistory);
 
