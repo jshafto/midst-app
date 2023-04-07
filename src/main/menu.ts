@@ -91,6 +91,7 @@ export default class MenuBuilder {
           click: () => {
             store.set('poem', '');
             store.set('history', JSON.stringify([]));
+            store.set('filename', '');
             this.mainWindow.webContents.send('open-file', '', []);
           },
         },
@@ -98,13 +99,16 @@ export default class MenuBuilder {
           label: 'Save',
           accelerator: 'Command+S',
           click: async () => {
-            const filename = dialog.showSaveDialogSync(this.mainWindow, {
-              title: 'Save File…',
-              filters: [
-                { name: 'All Files', extensions: ['*'] },
-                { name: 'json', extensions: ['json'] },
-              ],
-            });
+            let filename: string | undefined = store.get('filename') as string;
+            if (!filename) {
+              filename = dialog.showSaveDialogSync(this.mainWindow, {
+                title: 'Save File…',
+                filters: [
+                  { name: 'All Files', extensions: ['*'] },
+                  { name: 'json', extensions: ['json'] },
+                ],
+              });
+            }
             if (filename) {
               const text: string = store.get('poem') as string;
               const history: string = store.get('history') as string;
@@ -135,6 +139,7 @@ export default class MenuBuilder {
                   const { text, history } = JSON.parse(data);
                   store.set('poem', text);
                   store.set('history', JSON.stringify(history));
+                  store.set('filename', filename[0]);
                   this.mainWindow.webContents.send('open-file', text, history);
                 } catch {
                   dialog.showMessageBoxSync(this.mainWindow, {
@@ -257,13 +262,18 @@ export default class MenuBuilder {
             label: '&Save',
             accelerator: 'Ctrl+S',
             click: async () => {
-              const filename = dialog.showSaveDialogSync(this.mainWindow, {
-                title: 'Save File…',
-                filters: [
-                  { name: 'All Files', extensions: ['*'] },
-                  { name: 'json', extensions: ['json'] },
-                ],
-              });
+              let filename: string | undefined = store.get(
+                'filename'
+              ) as string;
+              if (!filename) {
+                filename = dialog.showSaveDialogSync(this.mainWindow, {
+                  title: 'Save File…',
+                  filters: [
+                    { name: 'All Files', extensions: ['*'] },
+                    { name: 'json', extensions: ['json'] },
+                  ],
+                });
+              }
               if (filename) {
                 const text: string = store.get('poem') as string;
                 const history: string = store.get('history') as string;
@@ -282,6 +292,7 @@ export default class MenuBuilder {
             click: () => {
               store.set('poem', '');
               store.set('history', JSON.stringify([]));
+              store.set('filename', '');
               this.mainWindow.webContents.send('open-file', '', []);
             },
           },
@@ -303,6 +314,7 @@ export default class MenuBuilder {
                     const { text, history } = JSON.parse(data);
                     store.set('poem', text);
                     store.set('history', JSON.stringify(history));
+                    store.set('filename', filename);
                     this.mainWindow.webContents.send(
                       'open-file',
                       text,
