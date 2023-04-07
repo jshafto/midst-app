@@ -1,0 +1,9 @@
+.TextEditor {
+  width: 100%;
+  height: calc(100vh - 250px);
+}
+
+.EditContainer {
+  width:100%;
+  display: flex;
+}

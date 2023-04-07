@@ -4,7 +4,10 @@ import {
   shell,
   BrowserWindow,
   MenuItemConstructorOptions,
+  dialog,
 } from 'electron';
+import fs from 'fs';
+import store from './store';
 
 interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
   selector?: string;
@@ -200,6 +203,26 @@ export default class MenuBuilder {
           {
             label: '&Open',
             accelerator: 'Ctrl+O',
+            click: () => {
+              this.mainWindow.close();
+            },
+          },
+          {
+            label: '&Save',
+            accelerator: 'Ctrl+S',
+            click: async () => {
+              const filename = dialog.showSaveDialogSync(this.mainWindow, {
+                title: 'Save File…',
+                filters: [
+                  { name: 'All Files', extensions: ['*'] },
+                  { name: 'json', extensions: ['json'] },
+                ],
+              });
+              if (filename) {
+                const text: string = store.get('poem') as string;
+                fs.writeFile(filename, text, () => {});
+              }
+            },
           },
           {
             label: '&Close',
