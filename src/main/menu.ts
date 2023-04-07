@@ -201,13 +201,6 @@ export default class MenuBuilder {
         label: '&File',
         submenu: [
           {
-            label: '&Open',
-            accelerator: 'Ctrl+O',
-            click: () => {
-              this.mainWindow.close();
-            },
-          },
-          {
             label: '&Save',
             accelerator: 'Ctrl+S',
             click: async () => {
@@ -220,7 +213,54 @@ export default class MenuBuilder {
               });
               if (filename) {
                 const text: string = store.get('poem') as string;
-                fs.writeFile(filename, text, () => {});
+                const history: string = store.get('history') as string;
+                const fullContents = JSON.stringify({
+                  text,
+                  history: JSON.parse(history),
+                });
+
+                fs.writeFile(filename, fullContents, () => {});
+              }
+            },
+          },
+          {
+            label: '&New',
+            accelerator: 'Ctrl+N',
+            click: () => {
+              store.set('poem', '');
+              store.set('history', JSON.stringify([]));
+              this.mainWindow.webContents.send('open-file', '', []);
+            },
+          },
+          {
+            label: '&Open',
+            accelerator: 'Ctrl+O',
+            click: async () => {
+              const filename = dialog.showOpenDialogSync(this.mainWindow, {
+                title: 'Open...',
+                filters: [
+                  { name: 'All Files', extensions: ['*'] },
+                  { name: 'json', extensions: ['json'] },
+                ],
+              });
+
+              if (filename?.length) {
+                fs.readFile(filename[0], 'utf8', (_err, data) => {
+                  try {
+                    const { text, history } = JSON.parse(data);
+                    store.set('poem', text);
+                    store.set('history', JSON.stringify(history));
+                    this.mainWindow.webContents.send(
+                      'open-file',
+                      text,
+                      history
+                    );
+                  } catch {
+                    dialog.showMessageBoxSync(this.mainWindow, {
+                      message: 'oops, bad file',
+                    });
+                  }
+                });
               }
             },
           },
