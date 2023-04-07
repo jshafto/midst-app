@@ -57,17 +57,12 @@ export default class MenuBuilder {
 
   buildDarwinTemplate(): MenuItemConstructorOptions[] {
     const subMenuAbout: DarwinMenuItemConstructorOptions = {
-      label: 'Electron',
+      label: 'Text Tracker',
       submenu: [
-        {
-          label: 'About ElectronReact',
-          selector: 'orderFrontStandardAboutPanel:',
-        },
-        { type: 'separator' },
         { label: 'Services', submenu: [] },
         { type: 'separator' },
         {
-          label: 'Hide ElectronReact',
+          label: 'Hide Text Tracker',
           accelerator: 'Command+H',
           selector: 'hide:',
         },
@@ -83,6 +78,76 @@ export default class MenuBuilder {
           accelerator: 'Command+Q',
           click: () => {
             app.quit();
+          },
+        },
+      ],
+    };
+    const subMenuFile: DarwinMenuItemConstructorOptions = {
+      label: 'File',
+      submenu: [
+        {
+          label: 'New',
+          accelerator: 'Command+N',
+          click: () => {
+            store.set('poem', '');
+            store.set('history', JSON.stringify([]));
+            store.set('filename', '');
+            this.mainWindow.webContents.send('open-file', '', []);
+          },
+        },
+        {
+          label: 'Save',
+          accelerator: 'Command+S',
+          click: async () => {
+            let filename: string | undefined = store.get('filename') as string;
+            if (!filename) {
+              filename = dialog.showSaveDialogSync(this.mainWindow, {
+                title: 'Save File…',
+                filters: [
+                  { name: 'All Files', extensions: ['*'] },
+                  { name: 'json', extensions: ['json'] },
+                ],
+              });
+            }
+            if (filename) {
+              const text: string = store.get('poem') as string;
+              const history: string = store.get('history') as string;
+              const fullContents = JSON.stringify({
+                text,
+                history: JSON.parse(history),
+              });
+
+              fs.writeFile(filename, fullContents, () => {});
+            }
+          },
+        },
+        {
+          label: 'Open',
+          accelerator: 'Command+O',
+          click: async () => {
+            const filename = dialog.showOpenDialogSync(this.mainWindow, {
+              title: 'Open...',
+              filters: [
+                { name: 'All Files', extensions: ['*'] },
+                { name: 'json', extensions: ['json'] },
+              ],
+            });
+
+            if (filename?.length) {
+              fs.readFile(filename[0], 'utf8', (_err, data) => {
+                try {
+                  const { text, history } = JSON.parse(data);
+                  store.set('poem', text);
+                  store.set('history', JSON.stringify(history));
+                  store.set('filename', filename[0]);
+                  this.mainWindow.webContents.send('open-file', text, history);
+                } catch {
+                  dialog.showMessageBoxSync(this.mainWindow, {
+                    message: 'oops, bad file',
+                  });
+                }
+              });
+            }
           },
         },
       ],
@@ -160,27 +225,13 @@ export default class MenuBuilder {
         {
           label: 'Learn More',
           click() {
-            shell.openExternal('https://electronjs.org');
+            shell.openExternal('https://midst.press');
           },
         },
         {
           label: 'Documentation',
           click() {
-            shell.openExternal(
-              'https://github.com/electron/electron/tree/main/docs#readme'
-            );
-          },
-        },
-        {
-          label: 'Community Discussions',
-          click() {
-            shell.openExternal('https://www.electronjs.org/community');
-          },
-        },
-        {
-          label: 'Search Issues',
-          click() {
-            shell.openExternal('https://github.com/electron/electron/issues');
+            shell.openExternal('https://github.com/jshafto/midst-demo');
           },
         },
       ],
@@ -192,7 +243,14 @@ export default class MenuBuilder {
         ? subMenuViewDev
         : subMenuViewProd;
 
-    return [subMenuAbout, subMenuEdit, subMenuView, subMenuWindow, subMenuHelp];
+    return [
+      subMenuAbout,
+      subMenuFile,
+      subMenuEdit,
+      subMenuView,
+      subMenuWindow,
+      subMenuHelp,
+    ];
   }
 
   buildDefaultTemplate() {
@@ -204,13 +262,18 @@ export default class MenuBuilder {
             label: '&Save',
             accelerator: 'Ctrl+S',
             click: async () => {
-              const filename = dialog.showSaveDialogSync(this.mainWindow, {
-                title: 'Save File…',
-                filters: [
-                  { name: 'All Files', extensions: ['*'] },
-                  { name: 'json', extensions: ['json'] },
-                ],
-              });
+              let filename: string | undefined = store.get(
+                'filename'
+              ) as string;
+              if (!filename) {
+                filename = dialog.showSaveDialogSync(this.mainWindow, {
+                  title: 'Save File…',
+                  filters: [
+                    { name: 'All Files', extensions: ['*'] },
+                    { name: 'json', extensions: ['json'] },
+                  ],
+                });
+              }
               if (filename) {
                 const text: string = store.get('poem') as string;
                 const history: string = store.get('history') as string;
@@ -229,6 +292,7 @@ export default class MenuBuilder {
             click: () => {
               store.set('poem', '');
               store.set('history', JSON.stringify([]));
+              store.set('filename', '');
               this.mainWindow.webContents.send('open-file', '', []);
             },
           },
@@ -250,6 +314,7 @@ export default class MenuBuilder {
                     const { text, history } = JSON.parse(data);
                     store.set('poem', text);
                     store.set('history', JSON.stringify(history));
+                    store.set('filename', filename);
                     this.mainWindow.webContents.send(
                       'open-file',
                       text,
@@ -321,27 +386,13 @@ export default class MenuBuilder {
           {
             label: 'Learn More',
             click() {
-              shell.openExternal('https://electronjs.org');
+              shell.openExternal('https://midst.press');
             },
           },
           {
             label: 'Documentation',
             click() {
-              shell.openExternal(
-                'https://github.com/electron/electron/tree/main/docs#readme'
-              );
-            },
-          },
-          {
-            label: 'Community Discussions',
-            click() {
-              shell.openExternal('https://www.electronjs.org/community');
-            },
-          },
-          {
-            label: 'Search Issues',
-            click() {
-              shell.openExternal('https://github.com/electron/electron/issues');
+              shell.openExternal('https://github.com/jshafto/midst-demo');
             },
           },
         ],
