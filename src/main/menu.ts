@@ -6,8 +6,66 @@ import {
   MenuItemConstructorOptions,
   dialog,
 } from 'electron';
+
 import fs from 'fs';
 import store from './store';
+
+const save = async (mainWindow: BrowserWindow) => {
+  let filename: string | undefined = store.get('filename') as string;
+  if (!filename) {
+    filename = dialog.showSaveDialogSync(mainWindow, {
+      title: 'Save File…',
+      filters: [
+        { name: 'All Files', extensions: ['*'] },
+        { name: 'json', extensions: ['json'] },
+      ],
+    });
+  }
+  if (filename) {
+    store.set('filename', filename);
+    const text: string = store.get('poem') as string;
+    const history: string = store.get('history') as string;
+    const fullContents = JSON.stringify({
+      text,
+      history: JSON.parse(history),
+    });
+
+    fs.writeFile(filename, fullContents, () => {});
+  }
+};
+
+export const newFile = (mainWindow: BrowserWindow) => {
+  store.set('poem', '');
+  store.set('history', JSON.stringify([]));
+  store.set('filename', '');
+  mainWindow.webContents.send('open-file', '', []);
+};
+
+export const openFile = async (mainWindow: BrowserWindow) => {
+  const filename = dialog.showOpenDialogSync(mainWindow, {
+    title: 'Open...',
+    filters: [
+      { name: 'All Files', extensions: ['*'] },
+      { name: 'json', extensions: ['json'] },
+    ],
+  });
+
+  if (filename?.length) {
+    fs.readFile(filename[0], 'utf8', (_err, data) => {
+      try {
+        const { text, history } = JSON.parse(data);
+        store.set('poem', text);
+        store.set('history', JSON.stringify(history));
+        store.set('filename', filename);
+        mainWindow.webContents.send('open-file', text, history);
+      } catch {
+        dialog.showMessageBoxSync(mainWindow, {
+          message: 'oops, bad file',
+        });
+      }
+    });
+  }
+};
 
 interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
   selector?: string;
@@ -88,67 +146,17 @@ export default class MenuBuilder {
         {
           label: 'New',
           accelerator: 'Command+N',
-          click: () => {
-            store.set('poem', '');
-            store.set('history', JSON.stringify([]));
-            store.set('filename', '');
-            this.mainWindow.webContents.send('open-file', '', []);
-          },
+          click: () => newFile(this.mainWindow),
         },
         {
           label: 'Save',
           accelerator: 'Command+S',
-          click: async () => {
-            let filename: string | undefined = store.get('filename') as string;
-            if (!filename) {
-              filename = dialog.showSaveDialogSync(this.mainWindow, {
-                title: 'Save File…',
-                filters: [
-                  { name: 'All Files', extensions: ['*'] },
-                  { name: 'json', extensions: ['json'] },
-                ],
-              });
-            }
-            if (filename) {
-              const text: string = store.get('poem') as string;
-              const history: string = store.get('history') as string;
-              const fullContents = JSON.stringify({
-                text,
-                history: JSON.parse(history),
-              });
-
-              fs.writeFile(filename, fullContents, () => {});
-            }
-          },
+          click: () => save(this.mainWindow),
         },
         {
           label: 'Open',
           accelerator: 'Command+O',
-          click: async () => {
-            const filename = dialog.showOpenDialogSync(this.mainWindow, {
-              title: 'Open...',
-              filters: [
-                { name: 'All Files', extensions: ['*'] },
-                { name: 'json', extensions: ['json'] },
-              ],
-            });
-
-            if (filename?.length) {
-              fs.readFile(filename[0], 'utf8', (_err, data) => {
-                try {
-                  const { text, history } = JSON.parse(data);
-                  store.set('poem', text);
-                  store.set('history', JSON.stringify(history));
-                  store.set('filename', filename[0]);
-                  this.mainWindow.webContents.send('open-file', text, history);
-                } catch {
-                  dialog.showMessageBoxSync(this.mainWindow, {
-                    message: 'oops, bad file',
-                  });
-                }
-              });
-            }
-          },
+          click: () => openFile(this.mainWindow),
         },
       ],
     };
@@ -261,73 +269,17 @@ export default class MenuBuilder {
           {
             label: '&Save',
             accelerator: 'Ctrl+S',
-            click: async () => {
-              let filename: string | undefined = store.get(
-                'filename'
-              ) as string;
-              if (!filename) {
-                filename = dialog.showSaveDialogSync(this.mainWindow, {
-                  title: 'Save File…',
-                  filters: [
-                    { name: 'All Files', extensions: ['*'] },
-                    { name: 'json', extensions: ['json'] },
-                  ],
-                });
-              }
-              if (filename) {
-                const text: string = store.get('poem') as string;
-                const history: string = store.get('history') as string;
-                const fullContents = JSON.stringify({
-                  text,
-                  history: JSON.parse(history),
-                });
-
-                fs.writeFile(filename, fullContents, () => {});
-              }
-            },
+            click: () => save(this.mainWindow),
           },
           {
             label: '&New',
             accelerator: 'Ctrl+N',
-            click: () => {
-              store.set('poem', '');
-              store.set('history', JSON.stringify([]));
-              store.set('filename', '');
-              this.mainWindow.webContents.send('open-file', '', []);
-            },
+            click: () => newFile(this.mainWindow),
           },
           {
             label: '&Open',
             accelerator: 'Ctrl+O',
-            click: async () => {
-              const filename = dialog.showOpenDialogSync(this.mainWindow, {
-                title: 'Open...',
-                filters: [
-                  { name: 'All Files', extensions: ['*'] },
-                  { name: 'json', extensions: ['json'] },
-                ],
-              });
-
-              if (filename?.length) {
-                fs.readFile(filename[0], 'utf8', (_err, data) => {
-                  try {
-                    const { text, history } = JSON.parse(data);
-                    store.set('poem', text);
-                    store.set('history', JSON.stringify(history));
-                    store.set('filename', filename);
-                    this.mainWindow.webContents.send(
-                      'open-file',
-                      text,
-                      history
-                    );
-                  } catch {
-                    dialog.showMessageBoxSync(this.mainWindow, {
-                      message: 'oops, bad file',
-                    });
-                  }
-                });
-              }
-            },
+            click: () => openFile(this.mainWindow),
           },
           {
             label: '&Close',
