@@ -56,7 +56,7 @@ export const openFile = async (mainWindow: BrowserWindow) => {
         const { text, history } = JSON.parse(data);
         store.set('poem', text);
         store.set('history', JSON.stringify(history));
-        store.set('filename', filename);
+        store.set('filename', filename[0]);
         mainWindow.webContents.send('open-file', text, history);
       } catch {
         dialog.showMessageBoxSync(mainWindow, {

@@ -1,9 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import './Editor.css';
 import { Link } from 'react-router-dom';
+import IconButton from '@mui/material/IconButton';
+import HistoryIcon from '@mui/icons-material/History';
+import { useTheme } from '@mui/material/styles';
 import { compareStrings, ChangeObj } from '../../tracking/utils';
 
 export default function Editor() {
+  const editor = useRef<HTMLTextAreaElement>(null);
+  const theme = useTheme();
   const restoreText = window.electron.store.get('poem') || '';
   const restoreHistory = window.electron.store.get('history')
     ? JSON.parse(window.electron.store.get('history'))
@@ -27,18 +32,37 @@ export default function Editor() {
     setHistory(strHistory);
   });
 
+  const focusEditor = () => {
+    if (editor.current) editor.current.focus();
+  };
+
+  useEffect(focusEditor, [editor]);
+
   return (
-    <>
+    <div style={{ backgroundColor: theme.palette.background.default }}>
+      <div className="TopButtons">
+        <Link to="/replay">
+          <IconButton size="small">
+            <HistoryIcon />
+          </IconButton>
+        </Link>
+      </div>
       <div className="EditContainer">
         <textarea
+          ref={editor}
           className="TextEditor"
+          style={{
+            letterSpacing: theme.typography.body1.letterSpacing,
+            backgroundColor: theme.palette.background.default,
+          }}
+          autoFocus
           rows={20}
-          placeholder="Type Poem Here"
           value={text}
           onChange={handleTextChange}
+          onBlur={focusEditor}
         />
       </div>
-      <Link to="/replay">Replay</Link>
-    </>
+      <div className="Spacer" />
+    </div>
   );
 }

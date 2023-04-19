@@ -45,16 +45,18 @@ if (isDebug) {
 }
 
 const installExtensions = async () => {
-  const installer = require('electron-devtools-installer');
+  const {
+    default: installExtension,
+    // REDUX_DEVTOOLS,
+    REACT_DEVELOPER_TOOLS,
+  } = await import('electron-devtools-assembler');
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
-  const extensions = ['REACT_DEVELOPER_TOOLS'];
+  const extensions = [REACT_DEVELOPER_TOOLS];
 
-  return installer
-    .default(
-      extensions.map((name) => installer[name]),
-      forceDownload
-    )
-    .catch(console.log);
+  return installExtension(extensions, {
+    loadExtensionOptions: { allowFileAccess: true },
+    forceDownload,
+  }).catch((err) => console.log('An error occurred: ', err));
 };
 
 const createWindow = async () => {

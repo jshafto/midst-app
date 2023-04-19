@@ -51,3 +51,21 @@ export const reconstruct = (
   }
   return '';
 };
+
+export const reconstructArray = (
+  initial: string,
+  changes: ChangeObj[],
+  index: number
+) => {
+  if (!changes.length) return [];
+  const reconstructed = reconstruct(initial, changes, index);
+  const insertPosition = changes[index].front + changes[index].inserted.length;
+  const insertRowNum =
+    reconstructed.slice(0, insertPosition).split('\n').length - 1;
+
+  return reconstructed.split('\n').map((row, j) => ({
+    text: row,
+    isInsertRow: j === insertRowNum,
+    key: j,
+  }));
+};

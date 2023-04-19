@@ -1,32 +1,25 @@
 import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
 import Editor from './components/Editor';
 import Replay from './components/Replay';
+import themeObj from './theme';
 import './App.css';
 
-function Hello() {
-  return (
-    <div className="thing">
-      <h1>Demo Text Tracker</h1>
-      <Editor />
-    </div>
-  );
-}
+const theme = createTheme(themeObj);
 
-function Other() {
-  return (
-    <div className="thing">
-      <h1>Demo Text Tracker</h1>
-      <Replay />
-    </div>
-  );
-}
 export default function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Hello />} />
-        <Route path="/replay" element={<Other />} />
-      </Routes>
-    </Router>
+    <>
+      <CssBaseline />
+      <ThemeProvider theme={theme}>
+        <Router>
+          <Routes>
+            <Route path="/" element={<Editor />} />
+            <Route path="/replay" element={<Replay />} />
+          </Routes>
+        </Router>
+      </ThemeProvider>
+    </>
   );
 }
