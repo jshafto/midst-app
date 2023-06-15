@@ -6,10 +6,9 @@ import Slider from '@mui/material/Slider';
 import EditIcon from '@mui/icons-material/Edit';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import PauseIcon from '@mui/icons-material/Pause';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
 import { format } from 'date-fns';
-import { useNavigate } from 'react-router-dom';
 
 export default function Replay() {
   const theme = useTheme();
@@ -59,13 +58,15 @@ export default function Replay() {
     }
     const interval = setInterval(() => {
       setStep((val) => val + 1);
-    }, 50);
+    }, 60);
     setPlayingInterval(interval);
   };
 
   useEffect(() => {
     if (currentChange.current) {
-      currentChange.current.scrollIntoView();
+      currentChange.current.scrollIntoView({
+        behavior: 'smooth',
+      });
     }
   }, [step, currentChange]);
   const labelFormatter = (x: number) => {

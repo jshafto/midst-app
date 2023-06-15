@@ -69,7 +69,7 @@ npm run package
 - [x] tooltip on slider that shows date/time
 - [x] when you switch to edit mode, have focus in text box
 - [x] scroll during replay to the place where text was added
-- [ ] smooth scrolling
+- [x] smooth scrolling
 - [ ] menu option to switch between edit mode and replay mode (with keyboard shortcut)
 - [ ] hitting "enter" or "space" should toggle play/pause
 - [ ] specific rich text features (indentation, bold, italics, underline, strikethrough)
