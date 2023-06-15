@@ -69,21 +69,32 @@ npm run package
 - [x] tooltip on slider that shows date/time
 - [x] when you switch to edit mode, have focus in text box
 - [x] scroll during replay to the place where text was added
+- [ ] smooth scrolling
 - [ ] menu option to switch between edit mode and replay mode (with keyboard shortcut)
 - [ ] hitting "enter" or "space" should toggle play/pause
-- [ ] converter for existing midst files
-- [ ] allow user to adjust replay speed
+- [ ] specific rich text features (indentation, bold, italics, underline, strikethrough)
 - allow user to customize/change appearance
   - [ ] choose dark or light theme (blocked by refactoring styles)
   - [ ] the ability to select a display font from the ones on their system (or even just from a few set fonts)
   - [ ] change font size
   - [ ] all these formatting options should probably get menu shortcuts as well
+- [ ] turn autoscroll on and off
+- [ ] allow user to adjust replay speed (website only, low priority)
+- [ ] explore "quiet mode" options
+  - [ ] do you need a button, or can tools disappear automatically while typing? (do some ui testing there)
+- [ ] export most recent frame to rich text file (dot doc?)
+- [ ] wait for scroll to finish before replay continues
 
 #### Major Features
 
+- [x] edit mode
+- [x] replay mode
+- [ ] rich text (as a tracked feature, not just visually)
 - [ ] autosave
+- [ ] converter for existing midst files
+- [ ] website
+- [ ] restore from point history
 - [ ] draft markers
-- [ ] italics (as a tracked feature, not just visually)
 
 #### Small Fixes
 
@@ -97,3 +108,4 @@ npm run package
 - [ ] better visual indicator that you're in edit vs replay mode
 - [ ] include a nice default font
 - [ ] once the app is closer to ready, seek styling feedback and ticket out remaining issues (probably many of them)
+- [ ] move button to bottom
