@@ -1,6 +1,6 @@
 import './Replay.css';
-import { useState, useEffect, useRef } from 'react';
-import { reconstructArray, ChangeObj } from 'renderer/tracking/utils';
+import { useState, useEffect } from 'react';
+import { reconstructHTML, ChangeObj } from 'renderer/tracking/utils';
 import IconButton from '@mui/material/IconButton';
 import Slider from '@mui/material/Slider';
 import EditIcon from '@mui/icons-material/Edit';
@@ -9,7 +9,19 @@ import PauseIcon from '@mui/icons-material/Pause';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
 import { format } from 'date-fns';
+import SanitizeHtml from '../SanitizeHtml';
 
+function isScrolledIntoView(el: HTMLSpanElement) {
+  const rect = el.getBoundingClientRect();
+  const elemTop = rect.top;
+  const elemBottom = rect.bottom;
+
+  // Only completely visible elements return true:
+  const isVisible = elemTop >= 0 && elemBottom <= window.innerHeight;
+  // Partially visible elements return true:
+  // isVisible = elemTop < window.innerHeight && elemBottom >= 0;
+  return isVisible;
+}
 export default function Replay() {
   const theme = useTheme();
   const navigate = useNavigate();
@@ -27,7 +39,7 @@ export default function Replay() {
     ReturnType<typeof setInterval> | undefined
   >(undefined);
 
-  const currentChange = useRef<HTMLDivElement>(null);
+  // const currentChange = useRef<HTMLDivElement>(null);
   const handleStepChange = (_event: Event, value: number | number[]) => {
     const newStep = Array.isArray(value) ? value[0] : value;
     if (newStep > maxStep || newStep < 0) {
@@ -63,12 +75,14 @@ export default function Replay() {
   };
 
   useEffect(() => {
-    if (currentChange.current) {
-      currentChange.current.scrollIntoView({
-        behavior: 'smooth',
+    const currentChange = document.getElementById('curr');
+    if (currentChange) {
+      if (isScrolledIntoView(currentChange)) return;
+      currentChange.scrollIntoView({
+        behavior: 'auto',
       });
     }
-  }, [step, currentChange]);
+  }, [step]);
   const labelFormatter = (x: number) => {
     if (x > maxStep) return '';
     return history[x] ? format(new Date(history[x].t), 'p\n MM/dd/yy') : '';
@@ -100,14 +114,10 @@ export default function Replay() {
         </Link>
       </div>
       <div className="ReplayContainer">
-        <div className="HistoryDisplay">
-          {reconstructArray('', history, step).map((el) => (
-            <span key={el.key} ref={el.isInsertRow ? currentChange : null}>
-              {el.text}
-              <br />
-            </span>
-          ))}
-        </div>
+        <SanitizeHtml
+          classes="HistoryDisplay"
+          html={reconstructHTML('', history, step)}
+        />
       </div>
       <div
         className="ControlBar"

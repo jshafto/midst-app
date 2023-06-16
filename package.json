@@ -72,13 +72,15 @@
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.12.0",
     "date-fns": "^2.29.3",
+    "dompurify": "^3.0.3",
     "electron-debug": "^3.2.0",
     "electron-log": "^4.4.8",
     "electron-store": "^8.1.0",
     "electron-updater": "^5.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.11.2"
+    "react-router-dom": "^6.11.2",
+    "react-trix": "^0.10.2"
   },
   "devDependencies": {
     "@electron/notarize": "^1.2.3",
@@ -88,6 +90,7 @@
     "@teamsupercell/typings-for-css-modules-loader": "^2.5.2",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^14.0.0",
+    "@types/dompurify": "^3.0.2",
     "@types/jest": "^29.5.2",
     "@types/node": "18.13.0",
     "@types/react": "^18.2.8",

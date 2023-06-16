@@ -69,3 +69,26 @@ export const reconstructArray = (
     key: j,
   }));
 };
+
+export const reconstructHTML = (
+  initial: string,
+  changes: ChangeObj[],
+  index: number
+) => {
+  if (!changes.length) return '';
+  const reconstructed = reconstruct(initial, changes, index);
+  const insertPosition = changes[index].front + changes[index].inserted.length;
+  const insertRowNum =
+    reconstructed.slice(0, insertPosition).split('<br>').length - 1;
+
+  // TODO: rewrite more efficiently
+  return reconstructed
+    .split('<br>')
+    .map((row, j) => {
+      if (j === insertRowNum) {
+        return `${row}<span id='curr'></span>`;
+      }
+      return row;
+    })
+    .join('<br>');
+};
