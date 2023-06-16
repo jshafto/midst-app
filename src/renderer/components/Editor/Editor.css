@@ -15,17 +15,6 @@
   outline: none;
 }
 
-.EditContainer {
-  width:100%;
-  display: flex;
-}
-
-.EditControlBar{
-  width: 100%;
-  display: flex;
-  justify-content: flex-end;
-}
-
 .TopButtons {
   height: 50px;
   display: flex;

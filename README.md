@@ -89,12 +89,17 @@ npm run package
 
 - [x] edit mode
 - [x] replay mode
-- [ ] rich text (as a tracked feature, not just visually)
+- [x] rich text (as a tracked feature, not just visually)
 - [ ] autosave
 - [ ] converter for existing midst files
 - [ ] website
 - [ ] restore from point history
 - [ ] draft markers
+
+### Bugs
+
+- [ ] scrolling doesn't respect empty line/carriage returns
+- [ ] using bold/italic shortcuts darkens buttons weirdly
 
 #### Small Fixes
 
