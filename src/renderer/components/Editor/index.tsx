@@ -48,22 +48,24 @@ export default function Editor() {
         <div id="toolbar-dom-id">
           <div className="trix-button-row">
             <span data-trix-button-group="text-tools">
-              <IconButton
-                size="small"
+              <button
+                type="button"
                 data-trix-attribute="bold"
                 data-trix-key="b"
                 title="bold"
+                className="icon-button"
               >
                 <FormatBoldIcon />
-              </IconButton>
-              <IconButton
-                size="small"
+              </button>
+              <button
+                type="button"
                 data-trix-attribute="italic"
                 data-trix-key="i"
                 title="italic"
+                className="icon-button"
               >
                 <FormatItalicIcon />
-              </IconButton>
+              </button>
             </span>
           </div>
         </div>

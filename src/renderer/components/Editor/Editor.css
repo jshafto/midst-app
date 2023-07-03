@@ -27,3 +27,30 @@
   height: 50px;
   align-items: center;
 }
+
+.icon-button {
+  background: transparent;
+  cursor: pointer;
+  transition: background-color .1s ease;
+  border: none;
+  border-radius: 50%;
+  display: inline-flex;
+  height: 32px;
+  width: 32px;
+  justify-content: center;
+  align-items: center;
+  margin: 2px;
+}
+
+.icon-button:hover {
+ background-color: rgba(0,0,0,.05);
+}
+
+.trix-active {
+  background-color: rgba(0,0,0,.1);
+  transition: background-color .1s ease;
+ }
+.trix-active:hover {
+  background-color: rgba(0,0,0,.15);
+  transition: background-color .1s ease;
+ }
