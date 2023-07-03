@@ -99,7 +99,7 @@ npm run package
 ### Bugs
 
 - [ ] scrolling doesn't respect empty line/carriage returns
-- [ ] using bold/italic shortcuts darkens buttons weirdly
+- [x] using bold/italic shortcuts darkens buttons weirdly
 
 #### Small Fixes
 
