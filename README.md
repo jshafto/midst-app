@@ -56,7 +56,7 @@ npm run package
 
 - [x] get react dev tools working
 - [ ] have filename display on topbar
-- [ ] figure out how to change the icon for the built package
+- [x] figure out how to change the icon for the built package
 - [ ] have a minimum window size and fix the default window size
 - [ ] enforce file format to .midst when opening
 - [ ] add .midst extension to files when saving
