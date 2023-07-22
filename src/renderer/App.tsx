@@ -13,6 +13,7 @@ export default function App() {
     <>
       <CssBaseline />
       <ThemeProvider theme={theme}>
+        <div className="draggable" />
         <Router>
           <Routes>
             <Route path="/" element={<Editor />} />

@@ -115,12 +115,12 @@ export default class MenuBuilder {
 
   buildDarwinTemplate(): MenuItemConstructorOptions[] {
     const subMenuAbout: DarwinMenuItemConstructorOptions = {
-      label: 'Text Tracker',
+      label: 'Midst',
       submenu: [
         { label: 'Services', submenu: [] },
         { type: 'separator' },
         {
-          label: 'Hide Text Tracker',
+          label: 'Hide Midst',
           accelerator: 'Command+H',
           selector: 'hide:',
         },

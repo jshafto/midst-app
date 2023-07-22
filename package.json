@@ -151,8 +151,8 @@
     "webpack-merge": "^5.8.0"
   },
   "build": {
-    "productName": "DemoApp",
-    "appId": "com.example.demo-app",
+    "productName": "Midst",
+    "appId": "com.example.midst",
     "asar": true,
     "asarUnpack": "**\\*.{node,dll}",
     "files": [

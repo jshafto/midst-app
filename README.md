@@ -1,6 +1,6 @@
-# Demo Text Tracker
+# Midst Redux
 
-This is an early proof of concept for a cross-platform reimplementation of [Midst](https://midst.press).
+This is a cross-platform reimplementation of the [Midst](https://midst.press) poetry editing software.
 
 It uses [Electron React Boilerplate](https://electron-react-boilerplate.js.org/).
 
@@ -44,8 +44,8 @@ npm run package
 
 - [x] change reconstruct function so it's not just a string... divs need keys and also need to be able to track where the change was
 - [x] factor out save/open functions in menu
-- [ ] refactor styles to something more maintainable
 - [ ] do versioning (also include version in the metadata for the saved files)
+- [ ] refactor styles to something more maintainable
 - [ ] go through all dependencies and ensure that you haven't added any packages to the production dependencies that should only be development dependencies
 
 #### Workflow
@@ -55,13 +55,13 @@ npm run package
 ### Electron
 
 - [x] get react dev tools working
-- [ ] have filename display on topbar
 - [x] figure out how to change the icon for the built package
-- [ ] have a minimum window size and fix the default window size
+- [ ] have filename display on topbar
 - [ ] enforce file format to .midst when opening
 - [ ] add .midst extension to files when saving
 - [ ] open a dialog to require the user to confirm when they try to switch away from a file with unsaved changes
 - [ ] should start with a blank page when app is launched, rather than preserving the last opened file
+- [ ] have a minimum window size and fix the default window size
 
 ### User-facing
 
@@ -70,9 +70,9 @@ npm run package
 - [x] when you switch to edit mode, have focus in text box
 - [x] scroll during replay to the place where text was added
 - [x] smooth scrolling
+- [x] button tooltips
 - [ ] menu option to switch between edit mode and replay mode (with keyboard shortcut)
 - [ ] hitting "enter" or "space" should toggle play/pause
-- [ ] specific rich text features (indentation, bold, italics, underline, strikethrough)
 - allow user to customize/change appearance
   - [ ] choose dark or light theme (blocked by refactoring styles)
   - [ ] the ability to select a display font from the ones on their system (or even just from a few set fonts)
@@ -84,6 +84,8 @@ npm run package
   - [ ] do you need a button, or can tools disappear automatically while typing? (do some ui testing there)
 - [ ] export most recent frame to rich text file (dot doc?)
 - [ ] wait for scroll to finish before replay continues
+- [ ] additional rich text features (indentation, underline, strikethrough)
+- [ ] restore cursor to most recent position when you switch back from replay mode (and scroll to that position)
 
 #### Major Features
 
@@ -109,6 +111,7 @@ npm run package
 ### Style
 
 - [x] make the step label white and rounded
+- [x] style top bars
 - [ ] test out appearance on mac (and windows as well)
 - [ ] better visual indicator that you're in edit vs replay mode
 - [ ] include a nice default font
