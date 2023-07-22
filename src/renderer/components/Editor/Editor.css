@@ -8,7 +8,7 @@
   overflow-y: scroll;
   padding-left: 25px;
   padding-right: 25px;
-  height: calc(100vh - 100px);
+  height: calc(100vh - 106px);
 
 }
 .TextEditor:focus{
@@ -16,9 +16,9 @@
 }
 
 .TopButtons {
-  height: 50px;
+  height: 36px;
   display: flex;
-  align-items: center;
+  align-items: start;
   justify-content: flex-end;
   margin-right: 15px;
 }
@@ -26,31 +26,46 @@
 .Spacer {
   height: 50px;
   align-items: center;
+  display: flex;
+  justify-content: end;
+  padding-right: 10px;
 }
 
 .icon-button {
-  background: transparent;
+  /* theme.palette.secondary.light */
+  background-color:transparent;
+  /* theme.palette.secondary.contrastText */
+  color: rgba(77, 77, 77, 0.845);
   cursor: pointer;
   transition: background-color .1s ease;
   border: none;
   border-radius: 50%;
   display: inline-flex;
-  height: 32px;
-  width: 32px;
+  height: 28px;
+  width: 28px;
   justify-content: center;
   align-items: center;
   margin: 2px;
 }
 
 .icon-button:hover {
- background-color: rgba(0,0,0,.05);
+ background-color: rgba(255, 145, 175, .1);
 }
 
 .trix-active {
-  background-color: rgba(0,0,0,.1);
   transition: background-color .1s ease;
+  stroke: rgb(255, 145, 175);
+  stroke-width: 1px;
+  color: rgb(255, 145, 175);
  }
-.trix-active:hover {
-  background-color: rgba(0,0,0,.15);
-  transition: background-color .1s ease;
- }
+
+.MuiTooltip-tooltip {
+  background-color: #FFA4B9 !important;
+  border-radius: 5px !important;
+  margin-top: 10px !important;
+  margin-bottom: 6px !important;
+}
+
+.MuiTooltip-arrow {
+  color: #FFA4B9 !important;
+}

@@ -1,7 +1,8 @@
-import FormatBoldIcon from '@mui/icons-material/FormatBold';
-import FormatItalicIcon from '@mui/icons-material/FormatItalic';
+import FormatBoldIcon from '@mui/icons-material/FormatBoldOutlined';
+import FormatItalicIcon from '@mui/icons-material/FormatItalicOutlined';
 import HistoryIcon from '@mui/icons-material/History';
-import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
+import Zoom from '@mui/material/Zoom';
 import { useTheme } from '@mui/material/styles';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -48,32 +49,39 @@ export default function Editor() {
         <div id="toolbar-dom-id">
           <div className="trix-button-row">
             <span data-trix-button-group="text-tools">
-              <button
-                type="button"
-                data-trix-attribute="bold"
-                data-trix-key="b"
-                title="bold"
-                className="icon-button"
+              <Tooltip
+                title="Bold"
+                TransitionComponent={Zoom}
+                enterDelay={1000}
+                arrow
               >
-                <FormatBoldIcon />
-              </button>
-              <button
-                type="button"
-                data-trix-attribute="italic"
-                data-trix-key="i"
-                title="italic"
-                className="icon-button"
+                <button
+                  type="button"
+                  data-trix-attribute="bold"
+                  data-trix-key="b"
+                  className="icon-button"
+                >
+                  <FormatBoldIcon fontSize="small" />
+                </button>
+              </Tooltip>
+              <Tooltip
+                title="Italic"
+                TransitionComponent={Zoom}
+                enterDelay={1000}
+                arrow
               >
-                <FormatItalicIcon />
-              </button>
+                <button
+                  type="button"
+                  data-trix-attribute="italic"
+                  data-trix-key="i"
+                  className="icon-button"
+                >
+                  <FormatItalicIcon fontSize="small" />
+                </button>
+              </Tooltip>
             </span>
           </div>
         </div>
-        <Link to="/replay">
-          <IconButton size="small">
-            <HistoryIcon />
-          </IconButton>
-        </Link>
       </div>
       <TrixEditor
         className="TextEditor"
@@ -83,7 +91,21 @@ export default function Editor() {
         mergeTags={[]}
         value={htmlString}
       />
-      <div className="Spacer" />
+      <div className="Spacer">
+        <Tooltip
+          title="Replay"
+          TransitionComponent={Zoom}
+          enterDelay={1000}
+          arrow
+          placement="top-start"
+        >
+          <Link to="/replay">
+            <button type="button" className="icon-button">
+              <HistoryIcon fontSize="small" />
+            </button>
+          </Link>
+        </Tooltip>
+      </div>
     </div>
   );
 }

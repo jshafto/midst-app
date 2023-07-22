@@ -1,14 +1,17 @@
 import './Replay.css';
 import { useState, useEffect } from 'react';
 import { reconstructHTML, ChangeObj } from 'renderer/tracking/utils';
-import IconButton from '@mui/material/IconButton';
 import Slider from '@mui/material/Slider';
+import Tooltip from '@mui/material/Tooltip';
+import Zoom from '@mui/material/Zoom';
 import EditIcon from '@mui/icons-material/Edit';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import PauseIcon from '@mui/icons-material/Pause';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
 import { format } from 'date-fns';
+import Grow from '@mui/material/Grow';
+import Box from '@mui/material/Box';
 import SanitizeHtml from '../SanitizeHtml';
 
 function isScrolledIntoView(el: HTMLSpanElement) {
@@ -55,6 +58,7 @@ export default function Replay() {
   }, [playingInterval, maxStep, step]);
 
   useEffect(() => {
+    // this clean up function runs when unmounted, clearing the interval
     return () => {
       if (playingInterval) {
         clearInterval(playingInterval);
@@ -62,16 +66,26 @@ export default function Replay() {
     };
   }, [playingInterval]);
 
-  const handleClickPlay = () => {
+  const handleClickPlay = async () => {
     clearInterval(playingInterval);
     setPlaying(true);
     if (step >= maxStep) {
       setStep(0);
+      // the slider needs time to move back to 0
+      // so there is a 250ms delay
+      // there might be a more elegant way to do this with async/await
+      setTimeout(() => {
+        const interval = setInterval(() => {
+          setStep((val) => val + 1);
+        }, 60);
+        setPlayingInterval(interval);
+      }, 250);
+    } else {
+      const interval = setInterval(() => {
+        setStep((val) => val + 1);
+      }, 60);
+      setPlayingInterval(interval);
     }
-    const interval = setInterval(() => {
-      setStep((val) => val + 1);
-    }, 60);
-    setPlayingInterval(interval);
   };
 
   useEffect(() => {
@@ -106,49 +120,71 @@ export default function Replay() {
 
   return (
     <div style={{ backgroundColor: theme.palette.background.default }}>
-      <div className="TopButtons">
-        <Link to="/">
-          <IconButton size="small">
-            <EditIcon />
-          </IconButton>
-        </Link>
-      </div>
+      <div className="TopButtons" />
       <div className="ReplayContainer">
         <SanitizeHtml
           classes="HistoryDisplay"
           html={reconstructHTML('', history, step)}
         />
       </div>
-      <div
-        className="ControlBar"
-        style={{
-          backgroundColor: theme.palette.primary.dark,
-        }}
-      >
-        <IconButton
-          size="small"
-          sx={{ color: theme.palette.secondary.contrastText }}
-          onClick={playing ? handleClickPause : handleClickPlay}
-          disabled={!history.length}
-        >
-          {playing ? <PauseIcon /> : <PlayArrowIcon />}
-        </IconButton>
-        <Slider
-          min={0}
-          max={maxStep}
-          value={step}
-          step={1}
-          size="small"
-          valueLabelFormat={labelFormatter}
-          valueLabelDisplay={history.length ? 'auto' : undefined}
-          sx={{
-            color: theme.palette.secondary.contrastText,
-            marginRight: '15px',
-            cursor: history.length ? undefined : 'not-allowed',
+      <Grow mountOnEnter in>
+        <Box
+          component="div"
+          className="ControlBar"
+          style={{
+            backgroundColor: theme.palette.primary.dark,
           }}
-          onChange={handleStepChange}
-        />
-      </div>
+        >
+          <button
+            type="button"
+            style={{ color: theme.palette.secondary.contrastText }}
+            onClick={playing ? handleClickPause : handleClickPlay}
+            disabled={!history.length}
+            className="control-bar-icon"
+          >
+            {playing ? (
+              <PauseIcon fontSize="small" />
+            ) : (
+              <PlayArrowIcon fontSize="small" />
+            )}
+          </button>
+          <Slider
+            min={0}
+            max={maxStep}
+            value={step}
+            step={1}
+            size="small"
+            valueLabelFormat={labelFormatter}
+            valueLabelDisplay={history.length ? 'auto' : undefined}
+            sx={{
+              color: theme.palette.secondary.contrastText,
+              marginRight: '15px',
+              cursor: history.length ? undefined : 'not-allowed',
+            }}
+            onChange={handleStepChange}
+          />
+          <Tooltip
+            title="Edit"
+            TransitionComponent={Zoom}
+            enterDelay={1000}
+            arrow
+            placement="top-end"
+            classes={{ arrow: 'custom-arrow', tooltip: 'custom' }}
+          >
+            <Link to="/">
+              <button
+                type="button"
+                className="control-bar-icon"
+                style={{
+                  color: theme.palette.secondary.contrastText,
+                }}
+              >
+                <EditIcon fontSize="small" />
+              </button>
+            </Link>
+          </Tooltip>
+        </Box>
+      </Grow>
     </div>
   );
 }
