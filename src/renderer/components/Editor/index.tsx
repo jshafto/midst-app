@@ -27,6 +27,7 @@ export default function Editor() {
     setHtmlString(newHtml);
     window.electron.store.set('poem', newHtml);
     window.electron.store.set('history', JSON.stringify(newHistory));
+    window.electron.store.set('edited', JSON.stringify(true));
   };
   const handleEditorReady = (editor: any) => {
     editor.element.focus();

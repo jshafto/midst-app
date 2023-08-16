@@ -56,12 +56,18 @@ npm run package
 
 - [x] get react dev tools working
 - [x] figure out how to change the icon for the built package
-- [ ] have filename display on topbar
-- [ ] enforce file format to .midst when opening
-- [ ] add .midst extension to files when saving
+- [x] have filename display on topbar
+- [x] launch midst by opening a `.midst` file, and that file should then be loaded correctly
+- [x] keep track of whether file has been changed since last save
 - [ ] open a dialog to require the user to confirm when they try to switch away from a file with unsaved changes
+- [ ] "save as" menu option/functionality
+- [ ] only allow users to open files with `.midst` extension
+- [ ] default extension for saving files should be `.midst`
 - [ ] should start with a blank page when app is launched, rather than preserving the last opened file
-- [ ] have a minimum window size and fix the default window size
+- [ ] default program for opening a `.midst` file should be midst
+- possible: allow multiple windows to be open, and have that all function correctly
+  - [ ] creating a new file/opening an existing file opens a new window instead of replacing the old one
+  - [ ] test to make sure having many windows open doesn't lead to performance issues
 
 ### User-facing
 
@@ -92,7 +98,7 @@ npm run package
 - [x] edit mode
 - [x] replay mode
 - [x] rich text (as a tracked feature, not just visually)
-- [ ] autosave
+- [ ] autosave (optional - toggle autosave off)
 - [ ] converter for existing midst files
 - [ ] website
 - [ ] restore from point history
@@ -112,8 +118,10 @@ npm run package
 
 - [x] make the step label white and rounded
 - [x] style top bars
-- [ ] test out appearance on mac (and windows as well)
+- [ ] test out appearance on linux (and windows as well)
 - [ ] better visual indicator that you're in edit vs replay mode
 - [ ] include a nice default font
 - [ ] once the app is closer to ready, seek styling feedback and ticket out remaining issues (probably many of them)
 - [ ] move button to bottom
+- [ ] check on why the shadow on mac seems darker than it should be?
+- [ ] have a minimum window size and fix the default window size
