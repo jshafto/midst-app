@@ -10,7 +10,32 @@ import {
 import fs from 'fs';
 import store from './store';
 
-const save = async (mainWindow: BrowserWindow) => {
+const handleUnsavedChanges = (mainWindow: BrowserWindow) => {
+  if (store.get('edited') === 'false') {
+    return false;
+  }
+
+  const choice = dialog.showMessageBoxSync(mainWindow, {
+    type: 'warning',
+    title: 'Unsaved changes',
+    message:
+      'Current document contains unsaved changes. Are you sure you want to proceed?',
+    buttons: ['Proceed', 'Cancel'],
+    // Sets the first option as the default option
+    // if the user hits the Return key
+    defaultId: 0,
+    // Sets the second button as the button selected
+    // if the user dismisses the message box.
+    cancelId: 1,
+  });
+
+  if (choice === 0) {
+    return false;
+  }
+  return true;
+};
+
+const save = async (mainWindow: BrowserWindow, darwin: boolean) => {
   let filename: string | undefined = store.get('filename') as string;
   if (!filename) {
     filename = dialog.showSaveDialogSync(mainWindow, {
@@ -29,19 +54,39 @@ const save = async (mainWindow: BrowserWindow) => {
       text,
       history: JSON.parse(history),
     });
+    if (darwin) {
+      mainWindow.setDocumentEdited(false);
+      mainWindow.setRepresentedFilename(filename);
+    }
+    mainWindow.setTitle(filename);
+    mainWindow.webContents.send('set-filename', filename);
 
     fs.writeFile(filename, fullContents, () => {});
+    store.set('edited', JSON.stringify(false));
   }
 };
 
-export const newFile = (mainWindow: BrowserWindow) => {
+export const newFile = (mainWindow: BrowserWindow, darwin: boolean) => {
+  const cancel = handleUnsavedChanges(mainWindow);
+  if (cancel) {
+    return;
+  }
   store.set('poem', '');
   store.set('history', JSON.stringify([]));
   store.set('filename', '');
-  mainWindow.webContents.send('open-file', '', []);
+  store.set('edited', JSON.stringify(false));
+  mainWindow.webContents.send('open-file', '', [], '');
+  if (darwin) {
+    mainWindow.setRepresentedFilename('Untitled');
+    mainWindow.setTitle('Untitled');
+  }
 };
 
-export const openFile = async (mainWindow: BrowserWindow) => {
+export const openFile = async (mainWindow: BrowserWindow, darwin: boolean) => {
+  const cancel = handleUnsavedChanges(mainWindow);
+  if (cancel) {
+    return;
+  }
   const filename = dialog.showOpenDialogSync(mainWindow, {
     title: 'Open...',
     filters: [
@@ -57,7 +102,13 @@ export const openFile = async (mainWindow: BrowserWindow) => {
         store.set('poem', text);
         store.set('history', JSON.stringify(history));
         store.set('filename', filename[0]);
-        mainWindow.webContents.send('open-file', text, history);
+        mainWindow.webContents.send('open-file', text, history, filename[0]);
+        if (darwin) {
+          mainWindow.setDocumentEdited(false);
+          mainWindow.setRepresentedFilename(filename[0]);
+        }
+        mainWindow.setTitle(filename[0]);
+        store.set('edited', JSON.stringify(false));
       } catch {
         dialog.showMessageBoxSync(mainWindow, {
           message: 'oops, bad file',
@@ -146,17 +197,17 @@ export default class MenuBuilder {
         {
           label: 'New',
           accelerator: 'Command+N',
-          click: () => newFile(this.mainWindow),
+          click: () => newFile(this.mainWindow, true),
         },
         {
           label: 'Save',
           accelerator: 'Command+S',
-          click: () => save(this.mainWindow),
+          click: () => save(this.mainWindow, true),
         },
         {
           label: 'Open',
           accelerator: 'Command+O',
-          click: () => openFile(this.mainWindow),
+          click: () => openFile(this.mainWindow, true),
         },
       ],
     };
@@ -269,17 +320,17 @@ export default class MenuBuilder {
           {
             label: '&Save',
             accelerator: 'Ctrl+S',
-            click: () => save(this.mainWindow),
+            click: () => save(this.mainWindow, false),
           },
           {
             label: '&New',
             accelerator: 'Ctrl+N',
-            click: () => newFile(this.mainWindow),
+            click: () => newFile(this.mainWindow, false),
           },
           {
             label: '&Open',
             accelerator: 'Ctrl+O',
-            click: () => openFile(this.mainWindow),
+            click: () => openFile(this.mainWindow, false),
           },
           {
             label: '&Close',

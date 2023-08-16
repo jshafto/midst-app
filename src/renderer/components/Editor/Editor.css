@@ -8,7 +8,7 @@
   overflow-y: scroll;
   padding-left: 25px;
   padding-right: 25px;
-  height: calc(100vh - 106px);
+  height: calc(100vh - 86px);
 
 }
 .TextEditor:focus{
@@ -17,6 +17,7 @@
 
 .TopButtons {
   height: 36px;
+  padding-top: 10px;
   display: flex;
   align-items: start;
   justify-content: flex-end;
@@ -46,6 +47,8 @@
   justify-content: center;
   align-items: center;
   margin: 2px;
+  -webkit-app-region: no-drag;
+  z-index: 1;
 }
 
 .icon-button:hover {

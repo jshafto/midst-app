@@ -9,9 +9,10 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, shell, ipcMain } from 'electron';
+import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
+import fs from 'fs';
 import store from './store';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
@@ -105,6 +106,37 @@ const createWindow = async () => {
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
+  mainWindow.on('close', (event) => {
+    if (store.get('edited') === 'false') {
+      return;
+    }
+
+    // If the window has unsaved changes, prevents it from closing
+    event.preventDefault();
+
+    if (mainWindow === null) return;
+    const choice = dialog.showMessageBoxSync(mainWindow, {
+      type: 'warning',
+      title: 'Unsaved changes',
+      message:
+        'Current document contains unsaved changes. Are you sure you want to proceed?',
+      buttons: ['Quit Anyway', 'Cancel'],
+      // Sets the first option as the default option
+      // if the user hits the Return key
+      defaultId: 0,
+      // Sets the second button as the button selected
+      // if the user dismisses the message box.
+      cancelId: 1,
+    });
+
+    if (choice === 0) {
+      // If the user selects "Quit Anyway", forces the window to close
+      // and removes the file from the store
+      store.clear();
+      if (mainWindow === null) return;
+      mainWindow.destroy();
+    }
+  });
 
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
@@ -148,6 +180,30 @@ app
       // On macOS it's common to re-create a window in the app when the
       // dock icon is clicked and there are no other windows open.
       if (mainWindow === null) createWindow();
+    });
+    app.on('open-file', (_event, filename) => {
+      fs.readFile(filename, 'utf8', (_err, data) => {
+        try {
+          const { text, history } = JSON.parse(data);
+          store.set('poem', text);
+          store.set('history', JSON.stringify(history));
+          store.set('filename', filename);
+          store.set('edited', JSON.stringify(false));
+          if (mainWindow === null) return;
+          mainWindow.webContents.send('open-file', text, history, filename);
+          if (process.platform === 'darwin') {
+            mainWindow.setDocumentEdited(false);
+            mainWindow.setRepresentedFilename(filename[0]);
+          }
+          mainWindow.setTitle(filename[0]);
+        } catch {
+          // todo: is there a better way to handle mainWindow being null?
+          if (mainWindow === null) return;
+          dialog.showMessageBoxSync(mainWindow, {
+            message: 'oops, bad file',
+          });
+        }
+      });
     });
   })
   .catch(console.log);
