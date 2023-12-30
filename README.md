@@ -44,7 +44,7 @@ npm run package
 
 - [x] change reconstruct function so it's not just a string... divs need keys and also need to be able to track where the change was
 - [x] factor out save/open functions in menu
-- [ ] do versioning (also include version in the metadata for the saved files)
+- [x] do versioning (also include version in the metadata for the saved files)
 - [ ] refactor styles to something more maintainable
 - [ ] go through all dependencies and ensure that you haven't added any packages to the production dependencies that should only be development dependencies
 
@@ -59,12 +59,12 @@ npm run package
 - [x] have filename display on topbar
 - [x] launch midst by opening a `.midst` file, and that file should then be loaded correctly
 - [x] keep track of whether file has been changed since last save
-- [ ] open a dialog to require the user to confirm when they try to switch away from a file with unsaved changes
+- [x] open a dialog to require the user to confirm when they try to switch away from a file with unsaved changes
 - [ ] "save as" menu option/functionality
 - [ ] only allow users to open files with `.midst` extension
-- [ ] default extension for saving files should be `.midst`
+- [x] default extension for saving files should be `.midst`
 - [ ] should start with a blank page when app is launched, rather than preserving the last opened file
-- [ ] default program for opening a `.midst` file should be midst
+- [x] default program for opening a `.midst` file should be midst
 - possible: allow multiple windows to be open, and have that all function correctly
   - [ ] creating a new file/opening an existing file opens a new window instead of replacing the old one
   - [ ] test to make sure having many windows open doesn't lead to performance issues
@@ -99,7 +99,7 @@ npm run package
 - [x] replay mode
 - [x] rich text (as a tracked feature, not just visually)
 - [ ] autosave (optional - toggle autosave off)
-- [ ] converter for existing midst files
+- [x] converter for existing midst files
 - [ ] website
 - [ ] restore from point history
 - [ ] draft markers
@@ -113,6 +113,7 @@ npm run package
 
 - [x] fix slider values (maxStep is off by 1)
 - [x] should switch to edit mode when you are in replay mode and make a new file
+- [x] start of slider overlaps with play button
 
 ### Style
 

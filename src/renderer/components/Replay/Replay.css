@@ -63,7 +63,11 @@
   width: 28px;
   justify-content: center;
   align-items: center;
-
+  
+}
+.control-icon-gap {
+  margin-right: 12px;
+  z-index: 10;
 }
 
 .control-bar-icon:hover {

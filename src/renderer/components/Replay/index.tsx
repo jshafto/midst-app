@@ -140,7 +140,7 @@ export default function Replay() {
             style={{ color: theme.palette.secondary.contrastText }}
             onClick={playing ? handleClickPause : handleClickPlay}
             disabled={!history.length}
-            className="control-bar-icon"
+            className="control-bar-icon control-icon-gap"
           >
             {playing ? (
               <PauseIcon fontSize="small" />
