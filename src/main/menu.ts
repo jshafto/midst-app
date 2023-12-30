@@ -1,14 +1,21 @@
 import {
-  app,
-  Menu,
-  shell,
   BrowserWindow,
+  Menu,
   MenuItemConstructorOptions,
+  app,
   dialog,
+  shell,
 } from 'electron';
 
 import fs from 'fs';
 import store from './store';
+import {
+  checkFileVersion,
+  convertMidstFile,
+  includeVersionInfo,
+  loadDataIntoWorkspace,
+  getNewMidstFilename,
+} from './util';
 
 const handleUnsavedChanges = (mainWindow: BrowserWindow) => {
   if (store.get('edited') === 'false') {
@@ -41,8 +48,8 @@ const save = async (mainWindow: BrowserWindow, darwin: boolean) => {
     filename = dialog.showSaveDialogSync(mainWindow, {
       title: 'Save File…',
       filters: [
+        { name: 'Midst', extensions: ['midst'] },
         { name: 'All Files', extensions: ['*'] },
-        { name: 'json', extensions: ['json'] },
       ],
     });
   }
@@ -50,10 +57,12 @@ const save = async (mainWindow: BrowserWindow, darwin: boolean) => {
     store.set('filename', filename);
     const text: string = store.get('poem') as string;
     const history: string = store.get('history') as string;
-    const fullContents = JSON.stringify({
-      text,
-      history: JSON.parse(history),
-    });
+    const fullContents = includeVersionInfo(
+      JSON.stringify({
+        text,
+        history: JSON.parse(history),
+      })
+    );
     if (darwin) {
       mainWindow.setDocumentEdited(false);
       mainWindow.setRepresentedFilename(filename);
@@ -90,29 +99,44 @@ export const openFile = async (mainWindow: BrowserWindow, darwin: boolean) => {
   const filename = dialog.showOpenDialogSync(mainWindow, {
     title: 'Open...',
     filters: [
+      { name: 'Midst', extensions: ['midst'] },
       { name: 'All Files', extensions: ['*'] },
-      { name: 'json', extensions: ['json'] },
     ],
   });
 
   if (filename?.length) {
     fs.readFile(filename[0], 'utf8', (_err, data) => {
-      try {
-        const { text, history } = JSON.parse(data);
-        store.set('poem', text);
-        store.set('history', JSON.stringify(history));
-        store.set('filename', filename[0]);
-        mainWindow.webContents.send('open-file', text, history, filename[0]);
-        if (darwin) {
-          mainWindow.setDocumentEdited(false);
-          mainWindow.setRepresentedFilename(filename[0]);
+      if (checkFileVersion(data) === 'v0.0.1') {
+        try {
+          loadDataIntoWorkspace(filename[0], data, mainWindow, darwin);
+        } catch {
+          dialog.showMessageBoxSync(mainWindow, {
+            title: `Error`,
+            type: 'error',
+            message: `The file ${filename[0]} could not be opened. File may be corrupted. Please select another file and try again.`,
+          });
         }
-        mainWindow.setTitle(filename[0]);
-        store.set('edited', JSON.stringify(false));
-      } catch {
-        dialog.showMessageBoxSync(mainWindow, {
-          message: 'oops, bad file',
+      } else {
+        const response = dialog.showMessageBoxSync(mainWindow, {
+          type: 'warning',
+          message: `Version not recognized. If this file is from an
+           older version of Midst, it may be possible to convert it. 
+           This will create a new file. Would you like to proceed?`,
+          buttons: ['Cancel', 'Convert File'],
+          defaultId: 1,
+          cancelId: 0,
         });
+        if (response === 1) {
+          const newFileContents = convertMidstFile(data);
+          const newFilename = getNewMidstFilename(filename[0]);
+          fs.writeFileSync(newFilename, includeVersionInfo(newFileContents));
+          loadDataIntoWorkspace(
+            newFilename,
+            includeVersionInfo(newFileContents),
+            mainWindow,
+            darwin
+          );
+        }
       }
     });
   }
@@ -197,7 +221,17 @@ export default class MenuBuilder {
         {
           label: 'New',
           accelerator: 'Command+N',
-          click: () => newFile(this.mainWindow, true),
+          click: () => {
+            if (this.mainWindow.isDestroyed()) {
+              store.set('poem', '');
+              store.set('history', JSON.stringify([]));
+              store.set('filename', '');
+              store.set('edited', JSON.stringify(false));
+              app.emit('activate', false);
+            } else {
+              newFile(this.mainWindow, true);
+            }
+          },
         },
         {
           label: 'Save',

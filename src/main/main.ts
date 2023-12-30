@@ -15,7 +15,14 @@ import log from 'electron-log';
 import fs from 'fs';
 import store from './store';
 import MenuBuilder from './menu';
-import { resolveHtmlPath } from './util';
+import {
+  resolveHtmlPath,
+  checkFileVersion,
+  loadDataIntoWorkspace,
+  convertMidstFile,
+  includeVersionInfo,
+  getNewMidstFilename,
+} from './util';
 
 class AppUpdater {
   constructor() {
@@ -26,6 +33,8 @@ class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
+
+let earlyPath = '';
 
 ipcMain.on('ipc-example', async (event, arg) => {
   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
@@ -101,6 +110,50 @@ const createWindow = async () => {
     } else {
       mainWindow.show();
     }
+
+    const darwin = process.platform === 'darwin';
+    if (earlyPath !== '') {
+      fs.readFile(earlyPath, 'utf8', (_err, data) => {
+        if (checkFileVersion(data) === 'v0.0.1') {
+          try {
+            if (mainWindow === null) return;
+            loadDataIntoWorkspace(earlyPath, data, mainWindow, darwin);
+          } catch {
+            if (mainWindow === null) return;
+            dialog.showMessageBoxSync(mainWindow, {
+              title: `Error`,
+              type: 'error',
+              message: `The file ${earlyPath} could not be opened. File may be corrupted. Please select another file and try again.`,
+            });
+          }
+          earlyPath = '';
+        } else {
+          if (mainWindow === null) return;
+          const response = dialog.showMessageBoxSync(mainWindow, {
+            type: 'warning',
+            message: `Version not recognized. If this file is from an
+             older version of Midst, it may be possible to convert it. 
+             This will create a new file. Would you like to proceed?`,
+            buttons: ['Cancel', 'Convert File'],
+            defaultId: 1,
+            cancelId: 0,
+          });
+          if (response === 1) {
+            const newFileContents = convertMidstFile(data);
+            const newFilename = getNewMidstFilename(earlyPath);
+
+            fs.writeFileSync(newFilename, includeVersionInfo(newFileContents));
+            loadDataIntoWorkspace(
+              newFilename,
+              includeVersionInfo(newFileContents),
+              mainWindow,
+              darwin
+            );
+          }
+          earlyPath = '';
+        }
+      });
+    }
   });
 
   mainWindow.on('closed', () => {
@@ -133,6 +186,7 @@ const createWindow = async () => {
       // If the user selects "Quit Anyway", forces the window to close
       // and removes the file from the store
       store.clear();
+      store.set('edited', 'false');
       if (mainWindow === null) return;
       mainWindow.destroy();
     }
@@ -160,50 +214,38 @@ ipcMain.on('electron-store-set', async (event, key, val) => {
   store.set(key, val);
 });
 
+// ipcMain.on('get-file-data'), async (event, val)=>;
+
 /**
  * Add event listeners...
  */
 
 app.on('window-all-closed', () => {
-  // Respect the OSX convention of having the application in memory even
+  // Uncomment to respect the OSX convention of having the application in memory even
   // after all windows have been closed
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
+  // if (process.platform !== 'darwin') {
+  //   app.quit();
+  // }
+  app.quit();
+});
+
+// Responding to external requests to open a file
+app.on('open-file', async (event, filename) => {
+  // this event fires on mac before the main window exists
+  // store the filename, so it can be used once the window is ready
+  // on other operating systems, this will need to be handled differently
+  event.preventDefault();
+  earlyPath = filename;
 });
 
 app
   .whenReady()
   .then(() => {
     createWindow();
-    app.on('activate', () => {
-      // On macOS it's common to re-create a window in the app when the
-      // dock icon is clicked and there are no other windows open.
-      if (mainWindow === null) createWindow();
-    });
-    app.on('open-file', (_event, filename) => {
-      fs.readFile(filename, 'utf8', (_err, data) => {
-        try {
-          const { text, history } = JSON.parse(data);
-          store.set('poem', text);
-          store.set('history', JSON.stringify(history));
-          store.set('filename', filename);
-          store.set('edited', JSON.stringify(false));
-          if (mainWindow === null) return;
-          mainWindow.webContents.send('open-file', text, history, filename);
-          if (process.platform === 'darwin') {
-            mainWindow.setDocumentEdited(false);
-            mainWindow.setRepresentedFilename(filename[0]);
-          }
-          mainWindow.setTitle(filename[0]);
-        } catch {
-          // todo: is there a better way to handle mainWindow being null?
-          if (mainWindow === null) return;
-          dialog.showMessageBoxSync(mainWindow, {
-            message: 'oops, bad file',
-          });
-        }
-      });
+    app.on('activate', (_event, hasVisibleWindows) => {
+      if (!hasVisibleWindows) {
+        createWindow();
+      }
     });
   })
   .catch(console.log);
