@@ -5,7 +5,7 @@ import Tooltip from '@mui/material/Tooltip';
 import Zoom from '@mui/material/Zoom';
 import { useTheme } from '@mui/material/styles';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { TrixEditor } from 'react-trix';
 import 'trix/dist/trix';
 import { ChangeObj, compareStrings } from '../../tracking/utils';
@@ -13,6 +13,7 @@ import './Editor.css';
 
 export default function Editor() {
   const theme = useTheme();
+  const navigate = useNavigate();
   const restoreText = window.electron.store.get('poem') || '';
   const restoreHistory = window.electron.store.get('history')
     ? JSON.parse(window.electron.store.get('history'))
@@ -42,6 +43,10 @@ export default function Editor() {
     setHtmlString(strPoem);
     setPoemHistory(strHistory);
     window.location.reload();
+  });
+
+  window.electron.ipcRenderer.on('toggle-edit-mode', () => {
+    navigate('/replay');
   });
 
   return (
