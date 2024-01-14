@@ -42,6 +42,9 @@ const handleUnsavedChanges = (mainWindow: BrowserWindow) => {
   return true;
 };
 
+const toggleEditMode = (mainWindow: BrowserWindow) => {
+  mainWindow.webContents.send('toggle-edit-mode');
+};
 const save = async (mainWindow: BrowserWindow, darwin: boolean) => {
   let filename: string | undefined = store.get('filename') as string;
   if (!filename) {
@@ -258,6 +261,11 @@ export default class MenuBuilder {
           label: 'Select All',
           accelerator: 'Command+A',
           selector: 'selectAll:',
+        },
+        {
+          label: 'Toggle Edit Mode',
+          accelerator: 'Command+E',
+          click: () => toggleEditMode(this.mainWindow),
         },
       ],
     };

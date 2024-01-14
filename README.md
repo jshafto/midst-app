@@ -77,7 +77,7 @@ npm run package
 - [x] scroll during replay to the place where text was added
 - [x] smooth scrolling
 - [x] button tooltips
-- [ ] menu option to switch between edit mode and replay mode (with keyboard shortcut)
+- [x] menu option to switch between edit mode and replay mode (with keyboard shortcut)
 - [ ] hitting "enter" or "space" should toggle play/pause
 - allow user to customize/change appearance
   - [ ] choose dark or light theme (blocked by refactoring styles)
@@ -114,6 +114,7 @@ npm run package
 - [x] fix slider values (maxStep is off by 1)
 - [x] should switch to edit mode when you are in replay mode and make a new file
 - [x] start of slider overlaps with play button
+- [ ] tab button doesn't work in edit mode—feels like it should just add a set number of spaces, i think
 
 ### Style
 
@@ -126,3 +127,9 @@ npm run package
 - [ ] move button to bottom
 - [ ] check on why the shadow on mac seems darker than it should be?
 - [ ] have a minimum window size and fix the default window size
+
+### thoughts that may or may not actually be issues
+
+- wait should there be an empty frame at the beginning? like right now frame 0 is always the first letter (cause what would the timestamp be for when nothing had been typed. like, is it worth tracking document creation as one frame? idk). there is like a warning in the console when you click play when there is only one character, cause there is nothing to replay. maybe it would be better to have an initial frame 0 where the timestamp is when the document was created.
+- i just made the menu option for switching be called "toggle edit mode" ideally it should change names depending on whether you are in edit mode or not
+- i set this up with a router between two pages for edit and replay mode, but really i'm thinking it might not make sense to have a router with separate pages, just have the component it displays depend on state or whatever

@@ -117,6 +117,9 @@ export default function Replay() {
       navigate('/');
     }
   });
+  window.electron.ipcRenderer.on('toggle-edit-mode', () => {
+    navigate('/');
+  });
 
   return (
     <div style={{ backgroundColor: theme.palette.background.default }}>
