@@ -1,12 +1,12 @@
 {
-  "name": "electron-react-boilerplate",
-  "version": "4.6.0",
-  "description": "A foundation for scalable desktop apps",
+  "name": "midst",
+  "version": "0.0.1",
+  "description": "Poetry in process",
   "license": "MIT",
   "author": {
-    "name": "Electron React Boilerplate Maintainers",
-    "email": "electronreactboilerplate@gmail.com",
-    "url": "https://github.com/electron-react-boilerplate"
+    "name": "Midst Team",
+    "email": "team@midst.press",
+    "url": "https://github.com/jshafto/demo-midst"
   },
   "main": "./dist/main/main.js",
   "scripts": {
