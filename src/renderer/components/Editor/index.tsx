@@ -35,6 +35,11 @@ export default function Editor() {
     editor.element.addEventListener('blur', () => {
       editor.element.focus();
     });
+    editor.element.addEventListener('keydown', (e: KeyboardEvent) => {
+      if (e.key === 'Tab') {
+        editor.insertString('        ');
+      }
+    });
   };
 
   window.electron.ipcRenderer.on('open-file', (savedPoem, savedHistory) => {

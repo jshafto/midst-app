@@ -108,13 +108,15 @@ npm run package
 
 - [ ] scrolling doesn't respect empty line/carriage returns
 - [x] using bold/italic shortcuts darkens buttons weirdly
+- [ ] whitespace issues with the converter?
+- [ ] when you switch back from replay mode, the cursor should probably be in the same spot where you left it
 
 #### Small Fixes
 
 - [x] fix slider values (maxStep is off by 1)
 - [x] should switch to edit mode when you are in replay mode and make a new file
 - [x] start of slider overlaps with play button
-- [ ] tab button doesn't work in edit mode—feels like it should just add a set number of spaces, i think
+- [x] tab button doesn't work in edit mode—feels like it should just add a set number of spaces
 
 ### Style
 
