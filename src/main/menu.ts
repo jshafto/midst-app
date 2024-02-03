@@ -123,7 +123,7 @@ export const openFile = async (mainWindow: BrowserWindow, darwin: boolean) => {
         const response = dialog.showMessageBoxSync(mainWindow, {
           type: 'warning',
           message: `Version not recognized. If this file is from an
-           older version of Midst, it may be possible to convert it. 
+           older version of Midst, it may be possible to convert it.
            This will create a new file. Would you like to proceed?`,
           buttons: ['Cancel', 'Convert File'],
           defaultId: 1,
@@ -332,7 +332,7 @@ export default class MenuBuilder {
         {
           label: 'Documentation',
           click() {
-            shell.openExternal('https://github.com/jshafto/midst-demo');
+            shell.openExternal('https://github.com/jshafto/demo-midst');
           },
         },
       ],
@@ -382,6 +382,27 @@ export default class MenuBuilder {
             },
           },
         ],
+      },
+      {
+        label: '&Edit',
+        submenu: [
+          { label: 'Undo', accelerator: 'Ctrl+Z', role: 'undo' },
+          { label: 'Redo', accelerator: 'Shift+Ctrl+Z', role: 'redo' },
+          { type: 'separator' },
+          { label: 'Cut', accelerator: 'Ctrl+X', role: 'cut' },
+          { label: 'Copy', accelerator: 'Ctrl+C', role: 'copy' },
+          { label: 'Paste', accelerator: 'Ctrl+V', role: 'paste' },
+          {
+            label: 'Select All',
+            accelerator: 'Ctrl+A',
+            selector: 'selectall',
+          },
+          {
+            label: 'Toggle Edit Mode',
+            accelerator: 'Ctrl+E',
+            click: () => toggleEditMode(this.mainWindow),
+          },
+        ] as MenuItemConstructorOptions[],
       },
       {
         label: '&View',
@@ -437,7 +458,7 @@ export default class MenuBuilder {
           {
             label: 'Documentation',
             click() {
-              shell.openExternal('https://github.com/jshafto/midst-demo');
+              shell.openExternal('https://github.com/jshafto/demo-midst');
             },
           },
         ],
