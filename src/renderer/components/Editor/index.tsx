@@ -53,6 +53,9 @@ export default function Editor() {
   window.electron.ipcRenderer.on('toggle-edit-mode', () => {
     navigate('/replay');
   });
+  const heightClass = window.electron.versions.isMac
+    ? 'editor-height-tall'
+    : 'editor-height-short';
 
   return (
     <div style={{ backgroundColor: theme.palette.background.default }}>
@@ -95,7 +98,7 @@ export default function Editor() {
         </div>
       </div>
       <TrixEditor
-        className="TextEditor"
+        className={`TextEditor ${heightClass}`}
         toolbar="toolbar-dom-id"
         onEditorReady={handleEditorReady}
         onChange={handleChange}

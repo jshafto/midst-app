@@ -8,6 +8,11 @@
  * When running `npm run build` or `npm run build:main`, this file is compiled to
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
+import {
+  setupTitlebar,
+  attachTitlebarToWindow,
+} from 'custom-electron-titlebar/main';
+
 import path from 'path';
 import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron';
 import { autoUpdater } from 'electron-updater';
@@ -33,6 +38,8 @@ class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
+
+setupTitlebar();
 
 let earlyPath = '';
 
@@ -86,17 +93,16 @@ const createWindow = async () => {
     show: false,
     width: 1024,
     height: 728,
-    icon: getAssetPath('icon.png'),
+    frame: false,
+    icon: getAssetPath('icon.ico'),
     webPreferences: {
+      sandbox: false,
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')
         : path.join(__dirname, '../../.erb/dll/preload.js'),
     },
     titleBarStyle: 'hidden',
-    titleBarOverlay: {
-      color: '#2f3241',
-      symbolColor: '#74b1be',
-    },
+    titleBarOverlay: true,
   });
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
@@ -132,7 +138,7 @@ const createWindow = async () => {
           const response = dialog.showMessageBoxSync(mainWindow, {
             type: 'warning',
             message: `Version not recognized. If this file is from an
-             older version of Midst, it may be possible to convert it. 
+             older version of Midst, it may be possible to convert it.
              This will create a new file. Would you like to proceed?`,
             buttons: ['Cancel', 'Convert File'],
             defaultId: 1,
@@ -194,6 +200,7 @@ const createWindow = async () => {
 
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
+  attachTitlebarToWindow(mainWindow);
 
   // Open urls in the user's browser
   mainWindow.webContents.setWindowOpenHandler((edata) => {

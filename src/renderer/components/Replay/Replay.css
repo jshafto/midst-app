@@ -1,22 +1,29 @@
 .HistoryDisplay {
   width: 100%;
-  height: calc(100vh - 86px);
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   font-size: 1rem;
   line-height: 1.5rem;
   box-sizing: border-box;
-  overflow-wrap:break-word;
+  overflow-wrap: break-word;
   padding: 0px 25px;
   overflow-y: scroll;
 }
 
+.history-height-tall {
+  height: calc(100vh - 116px);
+}
+
+.history-height-short {
+  height: calc(100vh - 150px);
+}
+
 .ReplayContainer {
-  width:100%;
+  width: 100%;
   display: flex;
   flex-direction: column;
 }
 
-.ControlBar{
+.ControlBar {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -27,7 +34,7 @@
 }
 
 .Slider {
-  color: rgba(255,255,255,0.9);
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .TopButtons {
@@ -37,6 +44,7 @@
   justify-content: flex-end;
   margin-right: 15px;
 }
+
 .MuiSlider-valueLabelLabel {
   white-space: pre-line;
   font-size: 10px;
@@ -47,7 +55,7 @@
   width: 68px !important;
   background-color: white !important;
   color: #FFA4B9 !important;
-  border:#FFA4B9 solid 1px !important;
+  border: #FFA4B9 solid 1px !important;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif !important;
 }
 
@@ -63,8 +71,9 @@
   width: 28px;
   justify-content: center;
   align-items: center;
-  
+
 }
+
 .control-icon-gap {
   margin-right: 12px;
   z-index: 10;
@@ -78,7 +87,7 @@
 .MuiTooltip-tooltip.custom {
   background-color: white !important;
   color: #FFA4B9 !important;
-  border:#FFA4B9 solid 1px !important;
+  border: #FFA4B9 solid 1px !important;
   margin-bottom: 6px !important;
 }
 
