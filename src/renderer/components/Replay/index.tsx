@@ -120,13 +120,16 @@ export default function Replay() {
   window.electron.ipcRenderer.on('toggle-edit-mode', () => {
     navigate('/');
   });
+  const heightClass = window.electron.versions.isMac
+    ? 'history-height-tall'
+    : 'history-height-short';
 
   return (
     <div style={{ backgroundColor: theme.palette.background.default }}>
       <div className="TopButtons" />
       <div className="ReplayContainer">
         <SanitizeHtml
-          classes="HistoryDisplay"
+          classes={`HistoryDisplay ${heightClass}`}
           html={reconstructHTML('', history, step)}
         />
       </div>

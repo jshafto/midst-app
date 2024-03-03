@@ -7,6 +7,7 @@ import {
   shell,
 } from 'electron';
 
+import path from 'path';
 import fs from 'fs';
 import store from './store';
 import {
@@ -58,6 +59,7 @@ const save = async (mainWindow: BrowserWindow, darwin: boolean) => {
   }
   if (filename) {
     store.set('filename', filename);
+    store.set('baseFilename', path.basename(filename));
     const text: string = store.get('poem') as string;
     const history: string = store.get('history') as string;
     const fullContents = includeVersionInfo(
@@ -71,7 +73,7 @@ const save = async (mainWindow: BrowserWindow, darwin: boolean) => {
       mainWindow.setRepresentedFilename(filename);
     }
     mainWindow.setTitle(filename);
-    mainWindow.webContents.send('set-filename', filename);
+    mainWindow.webContents.send('set-filename', path.basename(filename));
 
     fs.writeFile(filename, fullContents, () => {});
     store.set('edited', JSON.stringify(false));
@@ -86,6 +88,7 @@ export const newFile = (mainWindow: BrowserWindow, darwin: boolean) => {
   store.set('poem', '');
   store.set('history', JSON.stringify([]));
   store.set('filename', '');
+  store.set('baseFilename', '');
   store.set('edited', JSON.stringify(false));
   mainWindow.webContents.send('open-file', '', [], '');
   if (darwin) {

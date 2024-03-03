@@ -17,38 +17,32 @@ body {
 ::-webkit-scrollbar-track {
   background: #FFF5EE;
 }
+
 ::-webkit-scrollbar-track:hover {
   width: 15px;
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: rgba(0,0,0,.25);
+  background: rgba(0, 0, 0, .25);
   border-radius: 4px;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0,0,0,.25);
-
+  background: rgba(0, 0, 0, .25);
 }
 
-.draggable {
-  width: 100%;
-  height: 20px;
-  -webkit-app-region: drag;
-  position: absolute;
-  z-index: -1;
+
+
+.cet-menubar-menu-container {
+  background-color: #FFF !important;
 }
 
-.filename {
-  position: absolute;
-  text-align: center;
-  color:rgb(141, 141, 141);
-  font-size: 12px;
-  padding-top: 3px;
-  -webkit-app-region: drag;
-  height: 0px;
-  width: 100%;
-  overflow-y: show;
+.cet-titlebar {
+  overflow: visible;
+}
+
+.cet-menubar {
+  overflow: visible;
 }

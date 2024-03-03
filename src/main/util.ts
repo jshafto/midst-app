@@ -121,12 +121,17 @@ export const loadDataIntoWorkspace = (
   store.set('poem', text);
   store.set('history', JSON.stringify(history));
   store.set('filename', filename);
-  mainWindow.webContents.send('open-file', text, history, filename[0]);
+  store.set('baseFilename', path.basename(filename));
+  mainWindow.webContents.send(
+    'open-file',
+    text,
+    history,
+    path.basename(filename)
+  );
   if (darwin) {
     mainWindow.setDocumentEdited(false);
-    mainWindow.setRepresentedFilename(filename[0]);
+    mainWindow.setRepresentedFilename(path.basename(filename));
   }
-  mainWindow.setTitle(filename[0]);
   store.set('edited', JSON.stringify(false));
 };
 

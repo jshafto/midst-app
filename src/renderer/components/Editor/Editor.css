@@ -8,10 +8,17 @@
   overflow-y: scroll;
   padding-left: 25px;
   padding-right: 25px;
-  height: calc(100vh - 86px);
-
 }
-.TextEditor:focus{
+
+.editor-height-tall {
+  height: calc(100vh - 116px);
+}
+
+.editor-height-short {
+  height: calc(100vh - 150px);
+}
+
+.TextEditor:focus {
   outline: none;
 }
 
@@ -34,7 +41,7 @@
 
 .icon-button {
   /* theme.palette.secondary.light */
-  background-color:transparent;
+  background-color: transparent;
   /* theme.palette.secondary.contrastText */
   color: rgba(77, 77, 77, 0.845);
   cursor: pointer;
@@ -52,7 +59,7 @@
 }
 
 .icon-button:hover {
- background-color: rgba(255, 145, 175, .1);
+  background-color: rgba(255, 145, 175, .1);
 }
 
 .trix-active {
@@ -60,7 +67,7 @@
   stroke: rgb(255, 145, 175);
   stroke-width: 1px;
   color: rgb(255, 145, 175);
- }
+}
 
 .MuiTooltip-tooltip {
   background-color: #FFA4B9 !important;
