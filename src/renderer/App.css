@@ -40,7 +40,7 @@ body {
 }
 
 .cet-titlebar {
-  overflow: visible;
+  overflow: visible !important;
 }
 
 .cet-menubar {
