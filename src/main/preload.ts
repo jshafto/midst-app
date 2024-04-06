@@ -7,7 +7,8 @@ export type Channels =
   | 'ipc-example'
   | 'open-file'
   | 'set-filename'
-  | 'toggle-edit-mode';
+  | 'toggle-edit-mode'
+  | 'save-file';
 
 let titlebar: CustomTitlebar | null = null;
 

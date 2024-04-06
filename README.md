@@ -92,13 +92,15 @@ npm run package
 - [ ] wait for scroll to finish before replay continues
 - [ ] additional rich text features (indentation, underline, strikethrough)
 - [ ] restore cursor to most recent position when you switch back from replay mode (and scroll to that position)
+- [ ] find in text? probably without a replace feature, just the find parts
+- [ ] toggle autosave off?
 
 #### Major Features
 
 - [x] edit mode
 - [x] replay mode
 - [x] rich text (as a tracked feature, not just visually)
-- [ ] autosave (optional - toggle autosave off)
+- [x] autosave
 - [x] converter for existing midst files
 - [ ] website
 - [ ] restore from point history
@@ -108,7 +110,7 @@ npm run package
 
 - [ ] scrolling doesn't respect empty line/carriage returns
 - [x] using bold/italic shortcuts darkens buttons weirdly
-- [ ] whitespace issues with the converter?
+- [ ] whitespace issues with the converter
 - [ ] when you switch back from replay mode, the cursor should probably be in the same spot where you left it
 
 #### Small Fixes
@@ -117,12 +119,13 @@ npm run package
 - [x] should switch to edit mode when you are in replay mode and make a new file
 - [x] start of slider overlaps with play button
 - [x] tab button doesn't work in edit mode—feels like it should just add a set number of spaces
+- [ ] check whether there would be a way to allow users to selectively toggle spell check/underlining misspelled words off
 
 ### Style
 
 - [x] make the step label white and rounded
 - [x] style top bars
-- [ ] test out appearance on linux (and windows as well)
+- [x] test out appearance on linux (and windows as well)
 - [ ] better visual indicator that you're in edit vs replay mode
 - [ ] include a nice default font
 - [ ] once the app is closer to ready, seek styling feedback and ticket out remaining issues (probably many of them)

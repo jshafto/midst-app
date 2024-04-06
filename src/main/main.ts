@@ -19,7 +19,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import fs from 'fs';
 import store from './store';
-import MenuBuilder from './menu';
+import MenuBuilder, { save } from './menu';
 import {
   resolveHtmlPath,
   checkFileVersion,
@@ -105,6 +105,12 @@ const createWindow = async () => {
     titleBarOverlay: true,
   });
 
+  ipcMain.on('save-file', async (event, arg) => {
+    const darwin = process.platform === 'darwin';
+    if (mainWindow === null) return;
+    save(mainWindow, darwin);
+  });
+
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
   mainWindow.on('ready-to-show', () => {
@@ -167,6 +173,8 @@ const createWindow = async () => {
   });
   mainWindow.on('close', (event) => {
     if (store.get('edited') === 'false') {
+      store.clear();
+      store.set('edited', 'false');
       return;
     }
 
@@ -220,8 +228,6 @@ ipcMain.on('electron-store-get', async (event, val) => {
 ipcMain.on('electron-store-set', async (event, key, val) => {
   store.set(key, val);
 });
-
-// ipcMain.on('get-file-data'), async (event, val)=>;
 
 /**
  * Add event listeners...
