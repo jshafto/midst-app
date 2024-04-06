@@ -14,6 +14,16 @@ import './Editor.css';
 export default function Editor() {
   const theme = useTheme();
   const navigate = useNavigate();
+
+  const [autosaveTimeout, setAutostateTimeout] = useState<
+    NodeJS.Timeout | number | undefined
+  >(undefined); // create interval for autosaving
+
+  const saveFile = () => {
+    window.electron.ipcRenderer.sendMessage('save-file', []);
+    console.log('save-file');
+  };
+
   const restoreText = window.electron.store.get('poem') || '';
   const restoreHistory = window.electron.store.get('history')
     ? JSON.parse(window.electron.store.get('history'))
@@ -29,6 +39,11 @@ export default function Editor() {
     window.electron.store.set('poem', newHtml);
     window.electron.store.set('history', JSON.stringify(newHistory));
     window.electron.store.set('edited', JSON.stringify(true));
+
+    // cancel current autosave interval and set new one
+    clearTimeout(autosaveTimeout);
+    const newTimeout = setTimeout(saveFile, 1000);
+    setAutostateTimeout(newTimeout);
   };
   const handleEditorReady = (editor: any) => {
     editor.element.focus();

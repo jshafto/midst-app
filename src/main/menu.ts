@@ -46,7 +46,7 @@ const handleUnsavedChanges = (mainWindow: BrowserWindow) => {
 const toggleEditMode = (mainWindow: BrowserWindow) => {
   mainWindow.webContents.send('toggle-edit-mode');
 };
-const save = async (mainWindow: BrowserWindow, darwin: boolean) => {
+export const save = async (mainWindow: BrowserWindow, darwin: boolean) => {
   let filename: string | undefined = store.get('filename') as string;
   if (!filename) {
     filename = dialog.showSaveDialogSync(mainWindow, {
