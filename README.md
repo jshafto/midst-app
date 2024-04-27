@@ -94,6 +94,9 @@ npm run package
 - [ ] restore cursor to most recent position when you switch back from replay mode (and scroll to that position)
 - [ ] find in text? probably without a replace feature, just the find parts
 - [ ] toggle autosave off?
+- [x] instead of inferring cursor position from the location of the change, actually include the position of the cursor in what gets saved at each point
+- [ ] troubleshoot the scroll function not working
+- [ ] rewrite the midst converter to keep the position information and to use the new editor's approach
 
 #### Major Features
 
@@ -119,6 +122,9 @@ npm run package
 - [x] should switch to edit mode when you are in replay mode and make a new file
 - [x] start of slider overlaps with play button
 - [x] tab button doesn't work in edit mode—feels like it should just add a set number of spaces
+- [x] remove links! yikes!
+- [x] remove any formatting in pasted content but don't store that as part of edit history
+- [ ] fix tab button again since fixing those other things broke it but it should work all the way now
 - [ ] check whether there would be a way to allow users to selectively toggle spell check/underlining misspelled words off
 
 ### Style
@@ -138,3 +144,5 @@ npm run package
 - wait should there be an empty frame at the beginning? like right now frame 0 is always the first letter (cause what would the timestamp be for when nothing had been typed. like, is it worth tracking document creation as one frame? idk). there is like a warning in the console when you click play when there is only one character, cause there is nothing to replay. maybe it would be better to have an initial frame 0 where the timestamp is when the document was created.
 - i just made the menu option for switching be called "toggle edit mode" ideally it should change names depending on whether you are in edit mode or not
 - i set this up with a router between two pages for edit and replay mode, but really i'm thinking it might not make sense to have a router with separate pages, just have the component it displays depend on state or whatever
+- [x] switch to tiptap editor
+- i need to doublecheck on how tiptap sanitizes. i think it's good but i should look into it

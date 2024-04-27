@@ -95,3 +95,8 @@
   color: white !important;
 
 }
+
+.HistoryDisplay span, .HistoryDisplay p {
+  padding: 0;
+  margin:0;
+}

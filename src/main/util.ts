@@ -18,6 +18,7 @@ interface NewFrames {
 }
 
 const compareStrings = (str: string, next: string, t: Date): ChangeObj => {
+  // fix to use position
   let inserted = '';
   let front = 0;
   let end = 0;
@@ -98,6 +99,7 @@ export const convertMidstFile = (oldMidst: string) => {
   });
   const history = newFrames.map((el: NewFrames, ind: number) => {
     if (ind === 0) {
+      // fix
       return compareStrings('', el.content, el.t);
     }
     return compareStrings(newFrames[ind - 1].content, el.content, el.t);

@@ -71,6 +71,10 @@
     "@emotion/styled": "^11.10.6",
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.12.0",
+    "@tiptap/html": "^2.3.0",
+    "@tiptap/pm": "^2.3.0",
+    "@tiptap/react": "^2.3.0",
+    "@tiptap/starter-kit": "^2.3.0",
     "custom-electron-titlebar": "^4.2.8",
     "date-fns": "^2.30.0",
     "dompurify": "^3.0.5",
@@ -81,8 +85,7 @@
     "node-html-parser": "^6.1.8",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.11.2",
-    "react-trix": "^0.10.2"
+    "react-router-dom": "^6.11.2"
   },
   "devDependencies": {
     "@electron/notarize": "^1.2.3",

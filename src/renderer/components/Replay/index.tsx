@@ -12,19 +12,22 @@ import { useTheme } from '@mui/material/styles';
 import { format } from 'date-fns';
 import Grow from '@mui/material/Grow';
 import Box from '@mui/material/Box';
-import SanitizeHtml from '../SanitizeHtml';
+import { EditorContent, useEditor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
 
-function isScrolledIntoView(el: HTMLSpanElement) {
-  const rect = el.getBoundingClientRect();
-  const elemTop = rect.top;
-  const elemBottom = rect.bottom;
+const extensions = [
+  StarterKit.configure({
+    bulletList: false,
+    orderedList: false,
+    blockquote: false,
+    code: false,
+    codeBlock: false,
+    heading: false,
+    horizontalRule: false,
+    listItem: false,
+  }),
+];
 
-  // Only completely visible elements return true:
-  const isVisible = elemTop >= 0 && elemBottom <= window.innerHeight;
-  // Partially visible elements return true:
-  // isVisible = elemTop < window.innerHeight && elemBottom >= 0;
-  return isVisible;
-}
 export default function Replay() {
   const theme = useTheme();
   const navigate = useNavigate();
@@ -41,8 +44,23 @@ export default function Replay() {
   const [playingInterval, setPlayingInterval] = useState<
     ReturnType<typeof setInterval> | undefined
   >(undefined);
+  const heightClass = window.electron.versions.isMac
+    ? 'history-height-tall'
+    : 'history-height-short';
 
-  // const currentChange = useRef<HTMLDivElement>(null);
+  const editor = useEditor({
+    extensions,
+    content: reconstructHTML('', history, step),
+    editable: false,
+    parseOptions: {
+      preserveWhitespace: true,
+    },
+    editorProps: {
+      attributes: {
+        class: `HistoryDisplay ${heightClass}`,
+      },
+    },
+  });
   const handleStepChange = (_event: Event, value: number | number[]) => {
     const newStep = Array.isArray(value) ? value[0] : value;
     if (newStep > maxStep || newStep < 0) {
@@ -55,6 +73,12 @@ export default function Replay() {
       clearInterval(playingInterval);
       setPlaying(false);
     }
+    if (!editor) return;
+    const newContent = reconstructHTML('', history, step);
+    editor.commands.setContent(newContent, false, { preserveWhitespace: true });
+    const pos = history[step].pos;
+    editor.commands.setTextSelection(pos !== undefined ? pos : 0);
+    editor.commands.scrollIntoView();
   }, [playingInterval, maxStep, step]);
 
   useEffect(() => {
@@ -88,20 +112,10 @@ export default function Replay() {
     }
   };
 
-  useEffect(() => {
-    const currentChange = document.getElementById('curr');
-    if (currentChange) {
-      if (isScrolledIntoView(currentChange)) return;
-      currentChange.scrollIntoView({
-        behavior: 'auto',
-      });
-    }
-  }, [step]);
   const labelFormatter = (x: number) => {
     if (x > maxStep) return '';
     return history[x] ? format(new Date(history[x].t), 'p\n MM/dd/yy') : '';
   };
-
   const handleClickPause = () => {
     clearInterval(playingInterval);
     setPlaying(false);
@@ -120,18 +134,20 @@ export default function Replay() {
   window.electron.ipcRenderer.on('toggle-edit-mode', () => {
     navigate('/');
   });
-  const heightClass = window.electron.versions.isMac
-    ? 'history-height-tall'
-    : 'history-height-short';
+
+  // if ()
 
   return (
     <div style={{ backgroundColor: theme.palette.background.default }}>
       <div className="TopButtons" />
       <div className="ReplayContainer">
-        <SanitizeHtml
+        {/* <SanitizeHtml
           classes={`HistoryDisplay ${heightClass}`}
           html={reconstructHTML('', history, step)}
-        />
+        /> */}
+        <EditorContent editor={editor}>
+          <></>
+        </EditorContent>
       </div>
       <Grow mountOnEnter in>
         <Box

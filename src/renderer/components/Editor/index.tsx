@@ -1,17 +1,31 @@
-import FormatBoldIcon from '@mui/icons-material/FormatBoldOutlined';
-import FormatItalicIcon from '@mui/icons-material/FormatItalicOutlined';
 import HistoryIcon from '@mui/icons-material/History';
-import Tooltip from '@mui/material/Tooltip';
 import Zoom from '@mui/material/Zoom';
 import { useTheme } from '@mui/material/styles';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { TrixEditor } from 'react-trix';
-import 'trix/dist/trix';
 import { ChangeObj, compareStrings } from '../../tracking/utils';
 import './Editor.css';
+import { EditorProvider, useCurrentEditor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import MenuBar from './MenuBar';
+import Tooltip from '@mui/material/Tooltip';
+import { Editor as EditorType } from '@tiptap/core';
+
+const extensions = [
+  StarterKit.configure({
+    bulletList: false,
+    orderedList: false,
+    blockquote: false,
+    code: false,
+    codeBlock: false,
+    heading: false,
+    horizontalRule: false,
+    listItem: false,
+  }),
+];
 
 export default function Editor() {
+  const { editor } = useCurrentEditor();
   const theme = useTheme();
   const navigate = useNavigate();
 
@@ -21,7 +35,6 @@ export default function Editor() {
 
   const saveFile = () => {
     window.electron.ipcRenderer.sendMessage('save-file', []);
-    console.log('save-file');
   };
 
   const restoreText = window.electron.store.get('poem') || '';
@@ -30,11 +43,12 @@ export default function Editor() {
     : [];
   const [htmlString, setHtmlString] = useState(restoreText);
   const [poemHistory, setPoemHistory] = useState<ChangeObj[]>(restoreHistory);
-  const handleChange = (newHtml: string) => {
-    const newChange = compareStrings(htmlString, newHtml);
+  const onUpdate = ({ editor }: { editor: EditorType }) => {
+    const newHtml = editor.getHTML();
+    const pos = editor.state.selection.$anchor.pos;
+    const newChange = compareStrings(htmlString, newHtml, pos);
     const newHistory = [...poemHistory, newChange];
     setPoemHistory(newHistory);
-
     setHtmlString(newHtml);
     window.electron.store.set('poem', newHtml);
     window.electron.store.set('history', JSON.stringify(newHistory));
@@ -45,16 +59,8 @@ export default function Editor() {
     const newTimeout = setTimeout(saveFile, 1000);
     setAutostateTimeout(newTimeout);
   };
-  const handleEditorReady = (editor: any) => {
-    editor.element.focus();
-    editor.element.addEventListener('blur', () => {
-      editor.element.focus();
-    });
-    editor.element.addEventListener('keydown', (e: KeyboardEvent) => {
-      if (e.key === 'Tab') {
-        editor.insertString('        ');
-      }
-    });
+  const onBlur = ({ editor }: { editor: EditorType }) => {
+    editor.commands.focus();
   };
 
   window.electron.ipcRenderer.on('open-file', (savedPoem, savedHistory) => {
@@ -74,52 +80,23 @@ export default function Editor() {
 
   return (
     <div style={{ backgroundColor: theme.palette.background.default }}>
-      <div className="TopButtons">
-        <div id="toolbar-dom-id">
-          <div className="trix-button-row">
-            <span data-trix-button-group="text-tools">
-              <Tooltip
-                title="Bold"
-                TransitionComponent={Zoom}
-                enterDelay={1000}
-                arrow
-              >
-                <button
-                  type="button"
-                  data-trix-attribute="bold"
-                  data-trix-key="b"
-                  className="icon-button"
-                >
-                  <FormatBoldIcon fontSize="small" />
-                </button>
-              </Tooltip>
-              <Tooltip
-                title="Italic"
-                TransitionComponent={Zoom}
-                enterDelay={1000}
-                arrow
-              >
-                <button
-                  type="button"
-                  data-trix-attribute="italic"
-                  data-trix-key="i"
-                  className="icon-button"
-                >
-                  <FormatItalicIcon fontSize="small" />
-                </button>
-              </Tooltip>
-            </span>
-          </div>
-        </div>
-      </div>
-      <TrixEditor
-        className={`TextEditor ${heightClass}`}
-        toolbar="toolbar-dom-id"
-        onEditorReady={handleEditorReady}
-        onChange={handleChange}
-        mergeTags={[]}
-        value={htmlString}
-      />
+      <EditorProvider
+        slotBefore={<MenuBar />}
+        extensions={extensions}
+        content={restoreText}
+        onUpdate={onUpdate}
+        onBlur={onBlur}
+        // onSelectionUpdate={onSelectionUpdate}
+        editorProps={{
+          attributes: {
+            class: `TextEditor ${heightClass}`,
+          },
+        }}
+        parseOptions={{ preserveWhitespace: true }}
+      >
+        <></>
+      </EditorProvider>
+
       <div className="Spacer">
         <Tooltip
           title="Replay"
