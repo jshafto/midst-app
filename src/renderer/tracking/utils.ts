@@ -3,6 +3,7 @@ export interface ChangeObj {
   inserted: string;
   end: number;
   t: Date;
+  pos?: number;
 }
 
 export const step = (initial: string, change: ChangeObj) => {
@@ -14,7 +15,11 @@ export const step = (initial: string, change: ChangeObj) => {
   );
 };
 
-export const compareStrings = (str: string, next: string): ChangeObj => {
+export const compareStrings = (
+  str: string,
+  next: string,
+  pos: number
+): ChangeObj => {
   let inserted = '';
   let front = 0;
   let end = 0;
@@ -36,7 +41,7 @@ export const compareStrings = (str: string, next: string): ChangeObj => {
   }
 
   inserted = next.slice(front, next.length - end);
-  return { inserted, front, end, t };
+  return { inserted, front, end, t, pos };
 };
 
 export const reconstruct = (
@@ -77,18 +82,6 @@ export const reconstructHTML = (
 ) => {
   if (!changes.length) return '';
   const reconstructed = reconstruct(initial, changes, index);
-  const insertPosition = changes[index].front + changes[index].inserted.length;
-  const insertRowNum =
-    reconstructed.slice(0, insertPosition).split('<br>').length - 1;
 
-  // TODO: rewrite more efficiently
-  return reconstructed
-    .split('<br>')
-    .map((row, j) => {
-      if (j === insertRowNum) {
-        return `${row}<span id='curr'></span>`;
-      }
-      return row;
-    })
-    .join('<br>');
+  return reconstructed;
 };
