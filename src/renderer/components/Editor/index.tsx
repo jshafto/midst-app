@@ -5,11 +5,12 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ChangeObj, compareStrings } from '../../tracking/utils';
 import './Editor.css';
-import { EditorProvider, useCurrentEditor } from '@tiptap/react';
+import { EditorProvider } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import MenuBar from './MenuBar';
 import Tooltip from '@mui/material/Tooltip';
 import { Editor as EditorType } from '@tiptap/core';
+import { HandleTab } from '../../HandleTab';
 
 const extensions = [
   StarterKit.configure({
@@ -22,10 +23,10 @@ const extensions = [
     horizontalRule: false,
     listItem: false,
   }),
+  HandleTab,
 ];
 
 export default function Editor() {
-  const { editor } = useCurrentEditor();
   const theme = useTheme();
   const navigate = useNavigate();
 
@@ -46,6 +47,9 @@ export default function Editor() {
   const onUpdate = ({ editor }: { editor: EditorType }) => {
     const newHtml = editor.getHTML();
     const pos = editor.state.selection.$anchor.pos;
+    if (htmlString === newHtml) {
+      return;
+    }
     const newChange = compareStrings(htmlString, newHtml, pos);
     const newHistory = [...poemHistory, newChange];
     setPoemHistory(newHistory);
@@ -86,7 +90,6 @@ export default function Editor() {
         content={restoreText}
         onUpdate={onUpdate}
         onBlur={onBlur}
-        // onSelectionUpdate={onSelectionUpdate}
         editorProps={{
           attributes: {
             class: `TextEditor ${heightClass}`,

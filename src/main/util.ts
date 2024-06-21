@@ -5,6 +5,22 @@ import path from 'path';
 import { ChangeObj } from 'renderer/tracking/utils';
 import { URL } from 'url';
 import store from './store';
+import { generateJSON, generateHTML } from '@tiptap/html';
+import StarterKit from '@tiptap/starter-kit';
+import { JSONContent } from '@tiptap/core';
+
+const extensions = [
+  StarterKit.configure({
+    bulletList: false,
+    orderedList: false,
+    blockquote: false,
+    code: false,
+    codeBlock: false,
+    heading: false,
+    horizontalRule: false,
+    listItem: false,
+  }),
+];
 
 interface OldMidstTimelineFrame {
   content: string;
@@ -14,10 +30,16 @@ interface OldMidstTimelineFrame {
 
 interface NewFrames {
   content: string;
+  pos: number;
   t: Date;
 }
 
-const compareStrings = (str: string, next: string, t: Date): ChangeObj => {
+const compareStrings = (
+  str: string,
+  next: string,
+  t: Date,
+  pos?: number
+): ChangeObj => {
   // fix to use position
   let inserted = '';
   let front = 0;
@@ -40,7 +62,8 @@ const compareStrings = (str: string, next: string, t: Date): ChangeObj => {
   }
 
   inserted = next.slice(front, next.length - end);
-  return { inserted, front, end, t };
+  const returnFrame = { inserted, front, end, t, pos };
+  return returnFrame;
 };
 
 export function resolveHtmlPath(htmlFileName: string) {
@@ -71,38 +94,54 @@ export const includeVersionInfo = (data: string) => {
   return `midstVersion: ${CURRENT_VERSION}\n${data}`;
 };
 
+const getTextLengthFromJSONContent = (doc: JSONContent): number => {
+  // count all the characters (hard breaks are two)
+  // each is a line of text or hardbreak
+  // then that text count is actually the position
+  if (doc.type === 'text') {
+    // console.log(doc.text?.length || 0, 'textlength');
+    return doc.text?.length || 0;
+  }
+  if (doc.type === 'hardBreak') {
+    // console.log(2, 'hardbreak');
+    return 2;
+  }
+  if (doc.type === 'paragraph' || doc.type === 'doc') {
+    const contents = doc.content || [];
+    const lengths: number[] = contents.map((item) => {
+      return getTextLengthFromJSONContent(item);
+    });
+    const amount = lengths.reduce((partialSum, a) => partialSum + a, 1);
+    return amount;
+  }
+  return 0;
+};
+
 export const convertMidstFile = (oldMidst: string) => {
   const oldMidstJSON = JSON.parse(oldMidst);
   const frames = oldMidstJSON.editorTimelineFrames;
 
-  const newFrames = frames.map((el: OldMidstTimelineFrame) => {
-    const root = parse(el.content);
-
-    root.getElementsByTagName('b').forEach((bold) => {
-      bold.tagName = 'strong';
-    });
-    root.getElementsByTagName('i').forEach((italics) => {
-      italics.tagName = 'em';
-    });
-    const lines = root.getElementsByTagName('p');
+  const newFrames = frames.map((el: OldMidstTimelineFrame, index: number) => {
+    const jsonContentAtFrame = generateJSON(el.content, extensions);
+    const htmlContentAtFrame = generateHTML(jsonContentAtFrame, extensions);
+    // get the slice of the content before the line number
+    const truncatedJsonContentAtFrame = {
+      ...jsonContentAtFrame,
+      content: jsonContentAtFrame.content.slice(0, Number(el.lineNumber) + 1),
+    };
+    const position = getTextLengthFromJSONContent(truncatedJsonContentAtFrame);
 
     return {
-      content: `<div><!--block-->${lines
-        .map((p) => {
-          return p.innerHTML.includes('<br>')
-            ? p.innerHTML
-            : `${p.innerHTML}<br>`;
-        })
-        .join('')}</div>`,
+      content: htmlContentAtFrame,
+      pos: position,
       t: new Date(el.timestamp),
     };
   });
   const history = newFrames.map((el: NewFrames, ind: number) => {
     if (ind === 0) {
-      // fix
-      return compareStrings('', el.content, el.t);
+      return compareStrings('', el.content, el.t, el.pos);
     }
-    return compareStrings(newFrames[ind - 1].content, el.content, el.t);
+    return compareStrings(newFrames[ind - 1].content, el.content, el.t, el.pos);
   });
   const text = newFrames[newFrames.length - 1].content;
 
@@ -138,6 +177,8 @@ export const loadDataIntoWorkspace = (
 };
 
 export const getNewMidstFilename = (oldFilename: string) => {
+  // this will overwrite a file without giving you a chance to prevent it
+  // may be worth updating the logic to avoid that
   if (oldFilename.endsWith('.midst')) {
     return `${oldFilename.slice(0, -6)}-converted.midst`;
   }

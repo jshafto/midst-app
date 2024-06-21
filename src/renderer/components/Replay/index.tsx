@@ -77,12 +77,15 @@ export default function Replay() {
     const newContent = reconstructHTML('', history, step);
     editor.commands.setContent(newContent, false, { preserveWhitespace: true });
     const pos = history[step].pos;
-    editor.commands.setTextSelection(pos !== undefined ? pos : 0);
-    editor.commands.scrollIntoView();
+    const { node } = editor.view.domAtPos(pos !== undefined ? pos : 0);
+    if (node) {
+      (node as any).scrollIntoView?.({ block: 'center' });
+    }
   }, [playingInterval, maxStep, step]);
 
   useEffect(() => {
     // this clean up function runs when unmounted, clearing the interval
+    editor?.commands.focus();
     return () => {
       if (playingInterval) {
         clearInterval(playingInterval);
@@ -141,10 +144,6 @@ export default function Replay() {
     <div style={{ backgroundColor: theme.palette.background.default }}>
       <div className="TopButtons" />
       <div className="ReplayContainer">
-        {/* <SanitizeHtml
-          classes={`HistoryDisplay ${heightClass}`}
-          html={reconstructHTML('', history, step)}
-        /> */}
         <EditorContent editor={editor}>
           <></>
         </EditorContent>

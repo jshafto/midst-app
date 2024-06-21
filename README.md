@@ -96,7 +96,7 @@ npm run package
 - [ ] toggle autosave off?
 - [x] instead of inferring cursor position from the location of the change, actually include the position of the cursor in what gets saved at each point
 - [ ] troubleshoot the scroll function not working
-- [ ] rewrite the midst converter to keep the position information and to use the new editor's approach
+- [x] rewrite the midst converter to keep the position information and to use the new editor's approach
 
 #### Major Features
 
@@ -111,7 +111,7 @@ npm run package
 
 ### Bugs
 
-- [ ] scrolling doesn't respect empty line/carriage returns
+- [x] scrolling doesn't respect empty line/carriage returns
 - [x] using bold/italic shortcuts darkens buttons weirdly
 - [ ] whitespace issues with the converter
 - [ ] when you switch back from replay mode, the cursor should probably be in the same spot where you left it
@@ -124,7 +124,7 @@ npm run package
 - [x] tab button doesn't work in edit mode—feels like it should just add a set number of spaces
 - [x] remove links! yikes!
 - [x] remove any formatting in pasted content but don't store that as part of edit history
-- [ ] fix tab button again since fixing those other things broke it but it should work all the way now
+- [x] fix tab button again since fixing those other things broke it but it should work all the way now
 - [ ] check whether there would be a way to allow users to selectively toggle spell check/underlining misspelled words off
 
 ### Style
