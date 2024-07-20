@@ -25,6 +25,7 @@ const extensions = [
     heading: false,
     horizontalRule: false,
     listItem: false,
+    strike: false,
   }),
 ];
 
