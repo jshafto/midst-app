@@ -60,10 +60,10 @@ npm run package
 - [x] launch midst by opening a `.midst` file, and that file should then be loaded correctly
 - [x] keep track of whether file has been changed since last save
 - [x] open a dialog to require the user to confirm when they try to switch away from a file with unsaved changes
-- [ ] "save as" menu option/functionality
+- [x] "save as" menu option/functionality
 - [ ] only allow users to open files with `.midst` extension
 - [x] default extension for saving files should be `.midst`
-- [ ] should start with a blank page when app is launched, rather than preserving the last opened file
+- [x] should start with a blank page when app is launched, rather than preserving the last opened file
 - [x] default program for opening a `.midst` file should be midst
 - possible: allow multiple windows to be open, and have that all function correctly
   - [ ] creating a new file/opening an existing file opens a new window instead of replacing the old one
@@ -126,14 +126,18 @@ npm run package
 - [x] remove any formatting in pasted content but don't store that as part of edit history
 - [x] fix tab button again since fixing those other things broke it but it should work all the way now
 - [ ] check whether there would be a way to allow users to selectively toggle spell check/underlining misspelled words off
+- [ ] escape leaves editor
 
 ### Style
 
 - [x] make the step label white and rounded
 - [x] style top bars
 - [x] test out appearance on linux (and windows as well)
+- [ ] add squiggle to top of screen
+- [ ] make button text paler
+- [ ] shorten tooltip delay
+- [ ] package some fonts with it
 - [ ] better visual indicator that you're in edit vs replay mode
-- [ ] include a nice default font
 - [ ] once the app is closer to ready, seek styling feedback and ticket out remaining issues (probably many of them)
 - [ ] move button to bottom
 - [ ] check on why the shadow on mac seems darker than it should be?

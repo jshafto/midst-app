@@ -80,6 +80,41 @@ export const save = async (mainWindow: BrowserWindow, darwin: boolean) => {
   }
 };
 
+export const saveAs = async (mainWindow: BrowserWindow, darwin: boolean) => {
+  // let filename: string | undefined = store.get('filename') as string;
+  console.log('hi');
+
+  const filename = dialog.showSaveDialogSync(mainWindow, {
+    title: 'Save File As…',
+    filters: [
+      { name: 'Midst', extensions: ['midst'] },
+      { name: 'All Files', extensions: ['*'] },
+    ],
+  });
+
+  if (filename) {
+    store.set('filename', filename);
+    store.set('baseFilename', path.basename(filename));
+    const text: string = store.get('poem') as string;
+    const history: string = store.get('history') as string;
+    const fullContents = includeVersionInfo(
+      JSON.stringify({
+        text,
+        history: JSON.parse(history),
+      })
+    );
+    if (darwin) {
+      mainWindow.setDocumentEdited(false);
+      mainWindow.setRepresentedFilename(filename);
+    }
+    mainWindow.setTitle(filename);
+    mainWindow.webContents.send('set-filename', path.basename(filename));
+
+    fs.writeFile(filename, fullContents, () => {});
+    store.set('edited', JSON.stringify(false));
+  }
+};
+
 export const newFile = (mainWindow: BrowserWindow, darwin: boolean) => {
   const cancel = handleUnsavedChanges(mainWindow);
   if (cancel) {
@@ -245,6 +280,11 @@ export default class MenuBuilder {
           click: () => save(this.mainWindow, true),
         },
         {
+          label: 'Save As',
+          accelerator: 'Command+S+Shift',
+          click: () => saveAs(this.mainWindow, true),
+        },
+        {
           label: 'Open',
           accelerator: 'Command+O',
           click: () => openFile(this.mainWindow, true),
@@ -366,6 +406,11 @@ export default class MenuBuilder {
             label: '&Save',
             accelerator: 'Ctrl+S',
             click: () => save(this.mainWindow, false),
+          },
+          {
+            label: '&Save As',
+            accelerator: 'Ctrl+Shift+S',
+            click: () => saveAs(this.mainWindow, false),
           },
           {
             label: '&New',
