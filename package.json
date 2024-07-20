@@ -67,31 +67,31 @@
     }
   },
   "dependencies": {
-    "@emotion/react": "^11.10.6",
-    "@emotion/styled": "^11.10.6",
-    "@mui/icons-material": "^5.11.16",
-    "@mui/material": "^5.12.0",
-    "@tiptap/html": "^2.3.0",
-    "@tiptap/pm": "^2.3.0",
-    "@tiptap/react": "^2.3.0",
-    "@tiptap/starter-kit": "^2.3.0",
+    "@emotion/react": "^11.13.0",
+    "@emotion/styled": "^11.13.0",
+    "@mui/icons-material": "^5.16.4",
+    "@mui/material": "^5.16.4",
+    "@tiptap/html": "^2.5.4",
+    "@tiptap/pm": "^2.5.4",
+    "@tiptap/react": "^2.5.4",
+    "@tiptap/starter-kit": "^2.5.4",
     "custom-electron-titlebar": "^4.2.8",
     "date-fns": "^2.30.0",
-    "dompurify": "^3.0.5",
+    "dompurify": "^3.1.6",
     "electron-debug": "^3.2.0",
     "electron-log": "^4.4.8",
     "electron-store": "^8.1.0",
-    "electron-updater": "^5.3.0",
-    "node-html-parser": "^6.1.8",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-router-dom": "^6.11.2"
+    "electron-updater": "^6.3.0",
+    "node-html-parser": "^6.1.13",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.25.1"
   },
   "devDependencies": {
     "@electron/notarize": "^1.2.3",
-    "@electron/rebuild": "^3.2.13",
-    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.10",
-    "@svgr/webpack": "^8.0.1",
+    "@electron/rebuild": "^3.3.0",
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.11",
+    "@svgr/webpack": "^8.1.0",
     "@teamsupercell/typings-for-css-modules-loader": "^2.5.2",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^14.0.0",
@@ -220,16 +220,12 @@
     ],
     "publish": {
       "provider": "github",
-      "owner": "electron-react-boilerplate",
-      "repo": "electron-react-boilerplate"
+      "owner": "jpshafto",
+      "repo": "demo-midst"
     }
   },
-  "collective": {
-    "url": "https://opencollective.com/electron-react-boilerplate-594"
-  },
   "devEngines": {
-    "node": ">=14.x",
-    "npm": ">=7.x"
+    "node": "^18.12.0 || ^20.9.0 || >=22.0"
   },
   "electronmon": {
     "patterns": [
