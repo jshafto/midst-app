@@ -77,7 +77,7 @@ export default function Replay() {
     if (!editor) return;
     const newContent = reconstructHTML('', history, step);
     editor.commands.setContent(newContent, false, { preserveWhitespace: true });
-    const pos = history[step].pos;
+    const pos = history[step]?.pos || 0;
     const { node } = editor.view.domAtPos(pos !== undefined ? pos : 0);
     if (node) {
       (node as any).scrollIntoView?.({ block: 'center' });
