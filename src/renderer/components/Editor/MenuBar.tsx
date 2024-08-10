@@ -13,7 +13,7 @@ const MenuBar = () => {
 
   return (
     <div className="TopButtons">
-      <Tooltip title="Bold" TransitionComponent={Zoom} enterDelay={1000} arrow>
+      <Tooltip title="Bold" TransitionComponent={Zoom} enterDelay={400} arrow>
         <button
           onClick={() => editor.chain().focus().toggleBold().run()}
           disabled={!editor.can().chain().focus().toggleBold().run()}

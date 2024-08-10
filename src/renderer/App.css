@@ -37,12 +37,15 @@ body {
 
 .cet-menubar-menu-container {
   background-color: #FFF !important;
-  color: red;
 }
 
 .cet-titlebar {
   overflow: visible !important;
   z-index: 99 !important;
+}
+
+.cet-title {
+  color:rgba(77, 77, 77, 0.6);
 }
 
 .cet-menubar {
