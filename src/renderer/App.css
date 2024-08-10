@@ -37,12 +37,24 @@ body {
 
 .cet-menubar-menu-container {
   background-color: #FFF !important;
+  color: red;
 }
 
 .cet-titlebar {
   overflow: visible !important;
+  z-index: 99 !important;
 }
 
 .cet-menubar {
   overflow: visible;
+}
+
+.svg {
+  fill: #FFA4B9;
+  opacity: 70%;
+  height: 80px;
+  position: absolute;
+  z-index: 1000;
+  left: 4px;
+  top:2px;
 }
