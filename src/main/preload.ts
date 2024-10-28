@@ -29,10 +29,6 @@ window.addEventListener('DOMContentLoaded', () => {
     minWidth: 400,
   });
   if (process.platform !== 'darwin') {
-    console.log(
-      process.platform,
-      '--------------------------------------------'
-    );
     titlebar.updateMenuPosition('bottom');
     titlebar.updateTitleAlignment('left');
   }

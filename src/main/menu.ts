@@ -81,9 +81,6 @@ export const save = async (mainWindow: BrowserWindow, darwin: boolean) => {
 };
 
 export const saveAs = async (mainWindow: BrowserWindow, darwin: boolean) => {
-  // let filename: string | undefined = store.get('filename') as string;
-  console.log('hi');
-
   const filename = dialog.showSaveDialogSync(mainWindow, {
     title: 'Save File As…',
     filters: [

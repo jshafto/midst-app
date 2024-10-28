@@ -100,11 +100,9 @@ const getTextLengthFromJSONContent = (doc: JSONContent): number => {
   // each is a line of text or hardbreak
   // then that text count is actually the position
   if (doc.type === 'text') {
-    // console.log(doc.text?.length || 0, 'textlength');
     return doc.text?.length || 0;
   }
   if (doc.type === 'hardBreak') {
-    // console.log(2, 'hardbreak');
     return 2;
   }
   if (doc.type === 'paragraph' || doc.type === 'doc') {
