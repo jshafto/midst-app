@@ -78,11 +78,12 @@ npm run package
 - [x] smooth scrolling
 - [x] button tooltips
 - [x] menu option to switch between edit mode and replay mode (with keyboard shortcut)
-- [ ] hitting "enter" or "space" should toggle play/pause
+- [ ] **hitting "enter" or "space" should toggle play/pause**
+- [ ] **replace the midst icon**
 - allow user to customize/change appearance
   - [ ] choose dark or light theme (blocked by refactoring styles)
   - [ ] the ability to select a display font from the ones on their system (or even just from a few set fonts)
-  - [ ] change font size
+  - [ ] **change font size**
   - [ ] all these formatting options should probably get menu shortcuts as well
 - [ ] turn autoscroll on and off
 - [ ] allow user to adjust replay speed (website only, low priority)
@@ -93,10 +94,11 @@ npm run package
 - [ ] additional rich text features (indentation, underline, strikethrough)
 - [ ] restore cursor to most recent position when you switch back from replay mode (and scroll to that position)
 - [ ] find in text? probably without a replace feature, just the find parts
-- [ ] toggle autosave off?
+- [ ] toggle autosave off
 - [x] instead of inferring cursor position from the location of the change, actually include the position of the cursor in what gets saved at each point
-- [ ] troubleshoot the scroll function not working
 - [x] rewrite the midst converter to keep the position information and to use the new editor's approach
+- [ ] **add an empty frame at the beginning. like right now frame 0 is always the first letter (cause what would the timestamp be for when nothing had been typed. like, is it worth tracking document creation as one frame? idk). there is like a warning in the console when you click play when there is only one character, cause there is nothing to replay. maybe it would be better to have an initial frame 0 where the timestamp is when the document was created.**
+- [ ] change "toggle edit mode" to "toggle timeline" and change shortcut to command+t
 
 #### Major Features
 
@@ -107,6 +109,7 @@ npm run package
 - [x] converter for existing midst files
 - [ ] website
 - [ ] restore from point history
+- [ ] revert history to a timepoint (permanently erasing all history of changes past that point)
 - [ ] draft markers
 
 ### Bugs
@@ -115,6 +118,7 @@ npm run package
 - [x] using bold/italic shortcuts darkens buttons weirdly
 - [ ] whitespace issues with the converter
 - [ ] when you switch back from replay mode, the cursor should probably be in the same spot where you left it
+- [ ] linux only: icon doesn't work
 
 #### Small Fixes
 
@@ -126,27 +130,25 @@ npm run package
 - [x] remove any formatting in pasted content but don't store that as part of edit history
 - [x] fix tab button again since fixing those other things broke it but it should work all the way now
 - [ ] check whether there would be a way to allow users to selectively toggle spell check/underlining misspelled words off
-- [ ] escape leaves editor
+- [ ] **escape leaves timeline**
 
 ### Style
 
 - [x] make the step label white and rounded
 - [x] style top bars
 - [x] test out appearance on linux (and windows as well)
-- [ ] add squiggle to top of screen
-- [ ] make button text paler
-- [ ] shorten tooltip delay
+- [x] add squiggle to top of screen
+- [ ] **add more empty space to top**
+- [ ] **position squiggle**
+- [ ] restyle bold/italic buttons?
 - [ ] package some fonts with it
-- [ ] better visual indicator that you're in edit vs replay mode
-- [ ] once the app is closer to ready, seek styling feedback and ticket out remaining issues (probably many of them)
-- [ ] move button to bottom
-- [ ] check on why the shadow on mac seems darker than it should be?
-- [ ] have a minimum window size and fix the default window size
+- [x] once the app is closer to ready, seek styling feedback and ticket out remaining issues (probably many of them)
+- [x] move button to bottom
+- [x] check on why the shadow on mac seems darker than it should be?
+- [x] have a minimum window size and fix the default window size
 
 ### thoughts that may or may not actually be issues
 
-- wait should there be an empty frame at the beginning? like right now frame 0 is always the first letter (cause what would the timestamp be for when nothing had been typed. like, is it worth tracking document creation as one frame? idk). there is like a warning in the console when you click play when there is only one character, cause there is nothing to replay. maybe it would be better to have an initial frame 0 where the timestamp is when the document was created.
-- i just made the menu option for switching be called "toggle edit mode" ideally it should change names depending on whether you are in edit mode or not
 - i set this up with a router between two pages for edit and replay mode, but really i'm thinking it might not make sense to have a router with separate pages, just have the component it displays depend on state or whatever
 - [x] switch to tiptap editor
-- i need to doublecheck on how tiptap sanitizes. i think it's good but i should look into it
+  - [x] i need to doublecheck on how tiptap sanitizes. i think it's good but i should look into it
