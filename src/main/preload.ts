@@ -1,7 +1,10 @@
 // Disable no-unused-vars, broken for spread args
 /* eslint no-unused-vars: off */
+import {
+  CustomTitlebar,
+  TitlebarColor,
+} from '@jshafto/custom-electron-titlebar-update';
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
-import { CustomTitlebar, TitlebarColor } from 'custom-electron-titlebar';
 
 export type Channels =
   | 'ipc-example'
@@ -22,8 +25,14 @@ window.addEventListener('DOMContentLoaded', () => {
     menuPosition: 'left',
     titleHorizontalAlignment: 'center',
     shadow: false,
+    minHeight: 270,
+    minWidth: 400,
   });
   if (process.platform !== 'darwin') {
+    console.log(
+      process.platform,
+      '--------------------------------------------'
+    );
     titlebar.updateMenuPosition('bottom');
     titlebar.updateTitleAlignment('left');
   }
@@ -42,6 +51,13 @@ window.addEventListener('DOMContentLoaded', () => {
 </svg>
 `;
   document.body.insertBefore(svgLogo, document.body.firstChild);
+  if (process.platform === 'linux') {
+    console.log('hi');
+    const svg = document.querySelector('.svg');
+    if (svg !== null) {
+      svg.classList.add('svg-linux');
+    }
+  }
 });
 
 const electronHandler = {
@@ -77,7 +93,9 @@ const electronHandler = {
       }
     },
   },
-  versions: { isMac: process.platform === 'darwin' },
+  versions: {
+    isMac: process.platform === 'darwin',
+  },
 };
 
 contextBridge.exposeInMainWorld('electron', electronHandler);

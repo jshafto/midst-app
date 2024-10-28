@@ -59,5 +59,10 @@ body {
   position: absolute;
   z-index: 1000;
   left: 4px;
-  top:2px;
+  top: 2px;
+}
+
+.svg-linux {
+  left: 240px;
+  height: 60px;
 }
