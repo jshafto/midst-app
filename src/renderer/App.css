@@ -45,7 +45,7 @@ body {
 }
 
 .cet-title {
-  color:rgba(77, 77, 77, 0.6);
+  color: rgba(77, 77, 77, 0.6);
 }
 
 .cet-menubar {
@@ -63,6 +63,6 @@ body {
 }
 
 .svg-linux {
-  left: 240px;
+  left: 200px;
   height: 60px;
 }

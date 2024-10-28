@@ -51,8 +51,7 @@ window.addEventListener('DOMContentLoaded', () => {
 </svg>
 `;
   document.body.insertBefore(svgLogo, document.body.firstChild);
-  if (process.platform === 'linux') {
-    console.log('hi');
+  if (process.platform === 'linux' || process.platform === 'win32') {
     const svg = document.querySelector('.svg');
     if (svg !== null) {
       svg.classList.add('svg-linux');
