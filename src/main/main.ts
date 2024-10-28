@@ -9,24 +9,24 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import {
-  setupTitlebar,
   attachTitlebarToWindow,
-} from 'custom-electron-titlebar/main';
+  setupTitlebar,
+} from '@jshafto/custom-electron-titlebar-update/main';
 
-import path from 'path';
-import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron';
-import { autoUpdater } from 'electron-updater';
+import { app, BrowserWindow, dialog, ipcMain, shell } from 'electron';
 import log from 'electron-log';
+import { autoUpdater } from 'electron-updater';
 import fs from 'fs';
-import store from './store';
+import path from 'path';
 import MenuBuilder, { save } from './menu';
+import store from './store';
 import {
-  resolveHtmlPath,
   checkFileVersion,
-  loadDataIntoWorkspace,
   convertMidstFile,
-  includeVersionInfo,
   getNewMidstFilename,
+  includeVersionInfo,
+  loadDataIntoWorkspace,
+  resolveHtmlPath,
 } from './util';
 
 class AppUpdater {

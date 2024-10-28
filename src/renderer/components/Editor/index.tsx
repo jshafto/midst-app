@@ -1,16 +1,16 @@
 import HistoryIcon from '@mui/icons-material/History';
+import Tooltip from '@mui/material/Tooltip';
 import Zoom from '@mui/material/Zoom';
 import { useTheme } from '@mui/material/styles';
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { ChangeObj, compareStrings } from '../../tracking/utils';
-import './Editor.css';
+import { Editor as EditorType } from '@tiptap/core';
 import { EditorProvider } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import MenuBar from './MenuBar';
-import Tooltip from '@mui/material/Tooltip';
-import { Editor as EditorType } from '@tiptap/core';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { HandleTab } from '../../HandleTab';
+import { ChangeObj, compareStrings } from '../../tracking/utils';
+import './Editor.css';
+import MenuBar from './MenuBar';
 
 const extensions = [
   StarterKit.configure({
@@ -65,7 +65,9 @@ export default function Editor() {
     setAutostateTimeout(newTimeout);
   };
   const onBlur = ({ editor }: { editor: EditorType }) => {
-    editor.commands.focus();
+    if (window.electron.versions.isMac) {
+      editor.commands.focus();
+    }
   };
 
   window.electron.ipcRenderer.on('open-file', (savedPoem, savedHistory) => {
@@ -83,6 +85,10 @@ export default function Editor() {
     ? 'editor-height-tall'
     : 'editor-height-short';
 
+  const onCreate = ({ editor }: { editor: EditorType }) => {
+    editor.commands.focus();
+  };
+
   return (
     <div style={{ backgroundColor: theme.palette.background.default }}>
       <EditorProvider
@@ -97,6 +103,7 @@ export default function Editor() {
           },
         }}
         parseOptions={{ preserveWhitespace: true }}
+        onCreate={onCreate}
       >
         <></>
       </EditorProvider>
