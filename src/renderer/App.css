@@ -4,18 +4,16 @@
  */
 
 body {
-  background: #FFF5EE !important;
+  background: #fff5ee !important;
 }
-
 
 ::-webkit-scrollbar {
   width: 4px;
 }
 
-
 /* Track */
 ::-webkit-scrollbar-track {
-  background: #FFF5EE;
+  background: #fff5ee;
 }
 
 ::-webkit-scrollbar-track:hover {
@@ -24,19 +22,17 @@ body {
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, .25);
+  background: rgba(0, 0, 0, 0.25);
   border-radius: 4px;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, .25);
+  background: rgba(0, 0, 0, 0.25);
 }
 
-
-
 .cet-menubar-menu-container {
-  background-color: #FFF !important;
+  background-color: #fff !important;
 }
 
 .cet-titlebar {
@@ -53,12 +49,12 @@ body {
 }
 
 .svg {
-  fill: #FFA4B9;
+  fill: #ffa4b9;
   opacity: 70%;
   height: 80px;
   position: absolute;
   z-index: 1000;
-  left: 4px;
+  left: 20px;
   top: 2px;
 }
 

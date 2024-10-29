@@ -138,8 +138,8 @@ npm run package
 - [x] style top bars
 - [x] test out appearance on linux (and windows as well)
 - [x] add squiggle to top of screen
-- [ ] **add more empty space to top**
-- [ ] **position squiggle**
+- [x] add more empty space to top
+- [x] position squiggle
 - [ ] restyle bold/italic buttons?
 - [ ] package some fonts with it
 - [x] once the app is closer to ready, seek styling feedback and ticket out remaining issues (probably many of them)
