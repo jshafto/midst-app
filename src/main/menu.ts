@@ -46,6 +46,9 @@ const handleUnsavedChanges = (mainWindow: BrowserWindow) => {
 const toggleEditMode = (mainWindow: BrowserWindow) => {
   mainWindow.webContents.send('toggle-edit-mode');
 };
+const toggleSpellcheck = (mainWindow: BrowserWindow) => {
+  mainWindow.webContents.send('toggle-spellcheck');
+};
 export const save = async (mainWindow: BrowserWindow, darwin: boolean) => {
   let filename: string | undefined = store.get('filename') as string;
   if (!filename) {
@@ -307,6 +310,11 @@ export default class MenuBuilder {
           accelerator: 'Command+E',
           click: () => toggleEditMode(this.mainWindow),
         },
+        {
+          label: 'Show/hide spellcheck',
+          accelerator: 'Command+Shift+:',
+          click: () => toggleSpellcheck(this.mainWindow),
+        },
       ],
     };
     const subMenuViewDev: MenuItemConstructorOptions = {
@@ -446,6 +454,11 @@ export default class MenuBuilder {
             label: 'Toggle Edit Mode',
             accelerator: 'Ctrl+E',
             click: () => toggleEditMode(this.mainWindow),
+          },
+          {
+            label: 'Toggle Spellcheck',
+            accelerator: 'Ctrl+Shift+:',
+            click: () => toggleSpellcheck(this.mainWindow),
           },
         ] as MenuItemConstructorOptions[],
       },

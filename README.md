@@ -119,6 +119,7 @@ npm run package
 - [ ] whitespace issues with the converter
 - [ ] when you switch back from replay mode, the cursor should probably be in the same spot where you left it
 - [ ] linux only: icon doesn't work
+- [ ] find a way to get spellcheck mode to toggle without reloading page
 
 #### Small Fixes
 
@@ -129,7 +130,7 @@ npm run package
 - [x] remove links! yikes!
 - [x] remove any formatting in pasted content but don't store that as part of edit history
 - [x] fix tab button again since fixing those other things broke it but it should work all the way now
-- [ ] check whether there would be a way to allow users to selectively toggle spell check/underlining misspelled words off
+- [x] check whether there would be a way to allow users to selectively toggle spell check/underlining misspelled words off
 - [ ] **escape leaves timeline**
 
 ### Style
