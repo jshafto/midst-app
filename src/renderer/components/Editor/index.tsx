@@ -35,6 +35,14 @@ export default function Editor() {
     NodeJS.Timeout | number | undefined
   >(undefined); // create interval for autosaving
 
+  const restoreSpellcheckSetting = window.electron.store.get('spellcheck');
+  const [spellcheckOn, setSpellcheckOn] = useState<boolean>(
+    restoreSpellcheckSetting === 'true'
+  );
+  const heightClass = window.electron.versions.isMac
+    ? 'editor-height-tall'
+    : 'editor-height-short';
+
   const saveFile = () => {
     window.electron.ipcRenderer.sendMessage('save-file', []);
   };
@@ -81,9 +89,12 @@ export default function Editor() {
   window.electron.ipcRenderer.on('toggle-edit-mode', () => {
     navigate('/replay');
   });
-  const heightClass = window.electron.versions.isMac
-    ? 'editor-height-tall'
-    : 'editor-height-short';
+
+  window.electron.ipcRenderer.on('toggle-spellcheck', () => {
+    setSpellcheckOn(!spellcheckOn);
+    window.electron.store.set('spellcheck', (!spellcheckOn).toString());
+    window.location.reload();
+  });
 
   const onCreate = ({ editor }: { editor: EditorType }) => {
     editor.commands.focus();
@@ -100,6 +111,7 @@ export default function Editor() {
         editorProps={{
           attributes: {
             class: `TextEditor ${heightClass}`,
+            spellcheck: spellcheckOn.toString(),
           },
         }}
         parseOptions={{ preserveWhitespace: true }}

@@ -139,8 +139,6 @@ export default function Replay() {
     navigate('/');
   });
 
-  // if ()
-
   return (
     <div style={{ backgroundColor: theme.palette.background.default }}>
       <div className="TopButtons" />

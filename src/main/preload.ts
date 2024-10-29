@@ -11,7 +11,8 @@ export type Channels =
   | 'open-file'
   | 'set-filename'
   | 'toggle-edit-mode'
-  | 'save-file';
+  | 'save-file'
+  | 'toggle-spellcheck';
 
 let titlebar: CustomTitlebar | null = null;
 
