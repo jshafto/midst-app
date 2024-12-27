@@ -78,12 +78,12 @@ npm run package
 - [x] smooth scrolling
 - [x] button tooltips
 - [x] menu option to switch between edit mode and replay mode (with keyboard shortcut)
-- [ ] **hitting "enter" or "space" should toggle play/pause**
-- [ ] **replace the midst icon**
+- [x] hitting "enter" or "space" should toggle play/pause
+- [x] replace the midst icon
 - allow user to customize/change appearance
   - [ ] choose dark or light theme (blocked by refactoring styles)
   - [ ] the ability to select a display font from the ones on their system (or even just from a few set fonts)
-  - [ ] **change font size**
+  - [x] change font size
   - [ ] all these formatting options should probably get menu shortcuts as well
 - [ ] turn autoscroll on and off
 - [ ] allow user to adjust replay speed (website only, low priority)
@@ -131,7 +131,7 @@ npm run package
 - [x] remove any formatting in pasted content but don't store that as part of edit history
 - [x] fix tab button again since fixing those other things broke it but it should work all the way now
 - [x] check whether there would be a way to allow users to selectively toggle spell check/underlining misspelled words off
-- [ ] **escape leaves timeline**
+- [x] escape leaves timeline
 
 ### Style
 

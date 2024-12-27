@@ -13,6 +13,10 @@ import Store from 'electron-store';
 //     type: 'string',
 //     default: '[]',
 //   },
+//   font-size: {
+//     type: 'string',
+//     default: 'md',
+// }
 // };
 
 const store = new Store();
