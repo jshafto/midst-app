@@ -10,6 +10,7 @@ export type Channels =
   | 'ipc-example'
   | 'open-file'
   | 'set-filename'
+  | 'set-font-size'
   | 'toggle-edit-mode'
   | 'save-file'
   | 'toggle-spellcheck';

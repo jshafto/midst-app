@@ -5,7 +5,7 @@ import { useTheme } from '@mui/material/styles';
 import { Editor as EditorType } from '@tiptap/core';
 import { EditorProvider } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { HandleTab } from '../../HandleTab';
 import { ChangeObj, compareStrings } from '../../tracking/utils';
@@ -26,6 +26,13 @@ const extensions = [
   }),
   HandleTab,
 ];
+
+// interface Props {
+//   editorClass: string;
+//   age: number;
+// }
+
+// type EditorProps = React.ComponentProps<typeof >
 
 export default function Editor() {
   const theme = useTheme();
@@ -78,30 +85,60 @@ export default function Editor() {
     }
   };
 
-  window.electron.ipcRenderer.on('open-file', (savedPoem, savedHistory) => {
-    const strPoem = savedPoem as string;
-    const strHistory = savedHistory as ChangeObj[];
-    setHtmlString(strPoem);
-    setPoemHistory(strHistory);
-    window.location.reload();
-  });
+  useEffect(() => {
+    const removeOpen = window.electron.ipcRenderer.on(
+      'open-file',
+      (savedPoem, savedHistory) => {
+        const strPoem = savedPoem as string;
+        const strHistory = savedHistory as ChangeObj[];
+        setHtmlString(strPoem);
+        setPoemHistory(strHistory);
+        window.location.reload();
+      }
+    );
 
-  window.electron.ipcRenderer.on('toggle-edit-mode', () => {
-    navigate('/replay');
-  });
+    const removeToggleEdit = window.electron.ipcRenderer.on(
+      'toggle-edit-mode',
+      () => {
+        navigate('/replay');
+      }
+    );
 
-  window.electron.ipcRenderer.on('toggle-spellcheck', () => {
-    setSpellcheckOn(!spellcheckOn);
-    window.electron.store.set('spellcheck', (!spellcheckOn).toString());
-    window.location.reload();
-  });
+    const removeToggleSpellcheck = window.electron.ipcRenderer.on(
+      'toggle-spellcheck',
+      () => {
+        setSpellcheckOn(!spellcheckOn);
+        window.electron.store.set('spellcheck', (!spellcheckOn).toString());
+        window.location.reload();
+      }
+    );
+    return () => {
+      removeOpen();
+      removeToggleEdit();
+      removeToggleSpellcheck();
+    };
+  }, []);
 
   const onCreate = ({ editor }: { editor: EditorType }) => {
     editor.commands.focus();
   };
 
+  const restoreSizeClassSetting = Number(
+    window.electron.store.get('font-size')
+  );
+
+  const [sizeClass, _setSizeClass] = useState<number>(
+    [0, 1, 2, 3, 4].includes(restoreSizeClassSetting)
+      ? restoreSizeClassSetting
+      : 2
+  );
+
   return (
-    <div style={{ backgroundColor: theme.palette.background.default }}>
+    <div
+      style={{
+        backgroundColor: theme.palette.background.default,
+      }}
+    >
       <EditorProvider
         slotBefore={<MenuBar />}
         extensions={extensions}
@@ -110,7 +147,7 @@ export default function Editor() {
         onBlur={onBlur}
         editorProps={{
           attributes: {
-            class: `TextEditor ${heightClass}`,
+            class: `TextEditor ${heightClass} size-${sizeClass}`,
             spellcheck: spellcheckOn.toString(),
           },
         }}

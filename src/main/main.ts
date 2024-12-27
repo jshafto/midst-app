@@ -173,8 +173,10 @@ const createWindow = async () => {
   });
   mainWindow.on('close', (event) => {
     if (store.get('edited') === 'false') {
+      const oldFontSetting = store.get('font-size');
       store.clear();
       store.set('edited', 'false');
+      store.set('font-size', oldFontSetting);
       return;
     }
 
@@ -199,8 +201,10 @@ const createWindow = async () => {
     if (choice === 0) {
       // If the user selects "Quit Anyway", forces the window to close
       // and removes the file from the store
+      const oldFontSetting = store.get('font-size');
       store.clear();
       store.set('edited', 'false');
+      store.set('font-size', oldFontSetting);
       if (mainWindow === null) return;
       mainWindow.destroy();
     }

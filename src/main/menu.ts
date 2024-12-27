@@ -49,6 +49,25 @@ const toggleEditMode = (mainWindow: BrowserWindow) => {
 const toggleSpellcheck = (mainWindow: BrowserWindow) => {
   mainWindow.webContents.send('toggle-spellcheck');
 };
+
+const increaseFontSize = (mainWindow: BrowserWindow) => {
+  const fontSize = store.get('font-size') ? Number(store.get('font-size')) : 2;
+  if (fontSize >= 4) {
+    return;
+  }
+  store.set('font-size', fontSize + 1);
+  mainWindow.webContents.send('set-font-size', String(fontSize + 1));
+};
+const decreaseFontSize = (mainWindow: BrowserWindow) => {
+  const fontSize = store.get('font-size') ? Number(store.get('font-size')) : 2;
+
+  if (fontSize <= 0) {
+    return;
+  }
+  store.set('font-size', String(fontSize - 1));
+  mainWindow.webContents.send('set-font-size', fontSize - 1);
+};
+
 export const save = async (mainWindow: BrowserWindow, darwin: boolean) => {
   let filename: string | undefined = store.get('filename') as string;
   if (!filename) {
@@ -312,7 +331,7 @@ export default class MenuBuilder {
         },
         {
           label: 'Show/hide spellcheck',
-          accelerator: 'Command+Shift+:',
+          accelerator: 'Command+;',
           click: () => toggleSpellcheck(this.mainWindow),
         },
       ],
@@ -341,6 +360,16 @@ export default class MenuBuilder {
             this.mainWindow.webContents.toggleDevTools();
           },
         },
+        {
+          label: 'Increase text size',
+          accelerator: 'Command+Shift+=',
+          click: () => increaseFontSize(this.mainWindow),
+        },
+        {
+          label: 'Decrease text size',
+          accelerator: 'Command+Shift+-',
+          click: () => decreaseFontSize(this.mainWindow),
+        },
       ],
     };
     const subMenuViewProd: MenuItemConstructorOptions = {
@@ -352,6 +381,16 @@ export default class MenuBuilder {
           click: () => {
             this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen());
           },
+        },
+        {
+          label: 'Increase text size',
+          accelerator: 'Command+Shift+=',
+          click: () => increaseFontSize(this.mainWindow),
+        },
+        {
+          label: 'Decrease text size',
+          accelerator: 'Command+Shift+-',
+          click: () => decreaseFontSize(this.mainWindow),
         },
       ],
     };
@@ -457,7 +496,7 @@ export default class MenuBuilder {
           },
           {
             label: 'Toggle Spellcheck',
-            accelerator: 'Ctrl+Shift+:',
+            accelerator: 'Ctrl+;',
             click: () => toggleSpellcheck(this.mainWindow),
           },
         ] as MenuItemConstructorOptions[],
@@ -491,6 +530,16 @@ export default class MenuBuilder {
                     this.mainWindow.webContents.toggleDevTools();
                   },
                 },
+                {
+                  label: 'Increase text size',
+                  accelerator: 'Ctrl+Shift+=',
+                  click: () => increaseFontSize(this.mainWindow),
+                },
+                {
+                  label: 'Decrease text size',
+                  accelerator: 'Ctrl+Shift+-',
+                  click: () => decreaseFontSize(this.mainWindow),
+                },
               ]
             : [
                 {
@@ -501,6 +550,16 @@ export default class MenuBuilder {
                       !this.mainWindow.isFullScreen()
                     );
                   },
+                },
+                {
+                  label: 'Increase text size',
+                  accelerator: 'Ctrl+Shift+=',
+                  click: () => increaseFontSize(this.mainWindow),
+                },
+                {
+                  label: 'Decrease text size',
+                  accelerator: 'Ctrl+Shift+-',
+                  click: () => decreaseFontSize(this.mainWindow),
                 },
               ],
       },

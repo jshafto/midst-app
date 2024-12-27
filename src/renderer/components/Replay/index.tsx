@@ -1,5 +1,5 @@
 import './Replay.css';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { reconstructHTML, ChangeObj } from 'renderer/tracking/utils';
 import Slider from '@mui/material/Slider';
 import Tooltip from '@mui/material/Tooltip';
@@ -14,6 +14,8 @@ import Grow from '@mui/material/Grow';
 import Box from '@mui/material/Box';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import TextIncreaseIcon from '@mui/icons-material/TextIncrease';
+import TextDecreaseIcon from '@mui/icons-material/TextDecrease';
 
 const extensions = [
   StarterKit.configure({
@@ -39,6 +41,7 @@ export default function Replay() {
   const [maxStep, setMaxStep] = useState(
     history.length ? history.length - 1 : 0
   );
+  const playPauseButton = useRef<HTMLButtonElement | null>(null);
 
   const [step, setStep] = useState(maxStep);
   const [playing, setPlaying] = useState(false);
@@ -124,25 +127,124 @@ export default function Replay() {
     clearInterval(playingInterval);
     setPlaying(false);
   };
-  window.electron.ipcRenderer.on('open-file', (_savedPoem, savedHistory) => {
-    clearInterval(playingInterval);
-    setPlaying(false);
-    const strHistory = savedHistory as ChangeObj[];
-    setHistory(strHistory);
-    setMaxStep(strHistory.length ? strHistory.length - 1 : 0);
-    setStep(strHistory.length ? strHistory.length - 1 : 0);
-    if (!strHistory.length) {
-      navigate('/');
+
+  useEffect(() => {
+    const removeOpen = window.electron.ipcRenderer.on(
+      'open-file',
+      (_savedPoem, savedHistory) => {
+        clearInterval(playingInterval);
+        setPlaying(false);
+        const strHistory = savedHistory as ChangeObj[];
+        setHistory(strHistory);
+        setMaxStep(strHistory.length ? strHistory.length - 1 : 0);
+        setStep(strHistory.length ? strHistory.length - 1 : 0);
+        if (!strHistory.length) {
+          navigate('/');
+        }
+      }
+    );
+
+    const removeToggleEdit = window.electron.ipcRenderer.on(
+      'toggle-edit-mode',
+      () => {
+        navigate('/');
+      }
+    );
+
+    const removeFontSize = window.electron.ipcRenderer.on(
+      'set-font-size',
+      (newSize) => {
+        setSizeClass(Number(newSize));
+      }
+    );
+
+    return () => {
+      removeOpen();
+      removeToggleEdit();
+      removeFontSize();
+    };
+  }, []);
+
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        navigate('/');
+      }
+      if (e.key === 'Enter' || e.key === ' ') {
+        playPauseButton.current?.click();
+      }
     }
-  });
-  window.electron.ipcRenderer.on('toggle-edit-mode', () => {
-    navigate('/');
-  });
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    // Don't forget to clean up
+    return function cleanup() {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+  const restoreSizeClassSetting = Number(
+    window.electron.store.get('font-size')
+  );
+
+  const [sizeClass, setSizeClass] = useState<number>(
+    [0, 1, 2, 3, 4].includes(restoreSizeClassSetting)
+      ? restoreSizeClassSetting
+      : 2
+  );
+  const decreaseSize = () => {
+    if (sizeClass <= 0) {
+      return;
+    }
+    window.electron.store.set('font-size', String(sizeClass - 1));
+
+    setSizeClass(sizeClass - 1);
+  };
+  const increaseSize = () => {
+    if (sizeClass >= 4) {
+      return;
+    }
+
+    window.electron.store.set('font-size', String(sizeClass + 1));
+    setSizeClass(sizeClass + 1);
+  };
 
   return (
     <div style={{ backgroundColor: theme.palette.background.default }}>
-      <div className="TopButtons" />
-      <div className="ReplayContainer">
+      <div className="TopButtons">
+        <Tooltip
+          title="Increase text size"
+          TransitionComponent={Zoom}
+          enterDelay={1000}
+          arrow
+        >
+          <>
+            <button
+              onClick={increaseSize}
+              disabled={sizeClass >= 4}
+              className="icon-button size-icon"
+            >
+              <TextIncreaseIcon fontSize="small" />
+            </button>
+          </>
+        </Tooltip>
+        <Tooltip
+          title="Decrease text size"
+          TransitionComponent={Zoom}
+          enterDelay={1000}
+          arrow
+        >
+          <>
+            <button
+              disabled={sizeClass <= 0}
+              className="icon-button size-icon"
+              onClick={decreaseSize}
+            >
+              <TextDecreaseIcon fontSize="small" />
+            </button>
+          </>
+        </Tooltip>
+      </div>
+      <div className={`ReplayContainer size-${sizeClass}`}>
         <EditorContent editor={editor}>
           <></>
         </EditorContent>
@@ -157,6 +259,7 @@ export default function Replay() {
         >
           <button
             type="button"
+            ref={playPauseButton}
             style={{ color: theme.palette.secondary.contrastText }}
             onClick={playing ? handleClickPause : handleClickPlay}
             disabled={!history.length}
