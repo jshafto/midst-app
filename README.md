@@ -36,7 +36,7 @@ npm run package
 
 #### Tests
 
-- [ ] write basic tests
+- [x] write basic tests
 - [ ] do some manual testing of limits on dev and production version of app to figure out what limits are
 - [ ] write specific tests for size limits/change history limits
 
