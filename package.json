@@ -223,7 +223,7 @@
     "publish": {
       "provider": "github",
       "owner": "jpshafto",
-      "repo": "demo-midst"
+      "repo": "midst-app"
     }
   },
   "devEngines": {

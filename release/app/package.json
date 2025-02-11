@@ -6,7 +6,7 @@
   "author": {
     "name": "Midst Team",
     "email": "team@midst.press",
-    "url": "https://github.com/jshafto/demo-midst"
+    "url": "https://github.com/jshafto/midst-app"
   },
   "main": "./dist/main/main.js",
   "scripts": {
