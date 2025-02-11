@@ -9,6 +9,13 @@ import './App.css';
 const theme = createTheme(themeObj);
 
 export default function App() {
+  if (!window.electron)
+    return (
+      <>
+        <CssBaseline />
+        <ThemeProvider theme={theme}>Hello</ThemeProvider>
+      </>
+    );
   const restoreFilename =
     window.electron.store.get('baseFilename') || 'Untitled';
   window.electron.titlebar.updateTitle(restoreFilename);
