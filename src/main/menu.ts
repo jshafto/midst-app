@@ -419,7 +419,7 @@ export default class MenuBuilder {
         {
           label: 'Documentation',
           click() {
-            shell.openExternal('https://github.com/jshafto/demo-midst');
+            shell.openExternal('https://github.com/jshafto/midst-app');
           },
         },
       ],
@@ -575,7 +575,7 @@ export default class MenuBuilder {
           {
             label: 'Documentation',
             click() {
-              shell.openExternal('https://github.com/jshafto/demo-midst');
+              shell.openExternal('https://github.com/jshafto/midst-app');
             },
           },
         ],
