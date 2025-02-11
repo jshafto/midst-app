@@ -2,7 +2,7 @@
 
 This is a cross-platform reimplementation of the [Midst](https://midst.press) poetry editing software.
 
-It uses [Electron React Boilerplate](https://electron-react-boilerplate.js.org/).
+It is based on the [Electron React Boilerplate](https://electron-react-boilerplate.js.org/), used under the [MIT license](https://github.com/electron-react-boilerplate/electron-react-boilerplate/blob/main/LICENSE).
 
 ## Install
 
