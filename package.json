@@ -1,5 +1,5 @@
 {
-  "description": "A test project for learning electron",
+  "description": "A text editor for poets.",
   "author": {
     "name": "Jules",
     "url": "https://github.com/jshafto"
@@ -157,7 +157,7 @@
   },
   "build": {
     "productName": "Midst",
-    "appId": "com.example.midst",
+    "appId": "press.Midst.MidstApp",
     "asar": true,
     "asarUnpack": "**\\*.{node,dll}",
     "files": [
@@ -168,12 +168,13 @@
     "afterSign": ".erb/scripts/notarize.js",
     "mac": {
       "target": {
-        "target": "mas",
+        "target": "pkg",
         "arch": [
           "arm64",
           "x64"
         ]
       },
+      "notarize": false,
       "type": "distribution",
       "hardenedRuntime": true,
       "entitlements": "assets/entitlements.mac.plist",
