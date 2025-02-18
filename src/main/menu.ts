@@ -11,7 +11,7 @@ import path from 'path';
 import fs from 'fs';
 import store from './store';
 import {
-  checkFileVersion,
+  fileVersionMatchesCurrent,
   convertMidstFile,
   includeVersionInfo,
   loadDataIntoWorkspace,
@@ -166,7 +166,7 @@ export const openFile = async (mainWindow: BrowserWindow, darwin: boolean) => {
 
   if (filename?.length) {
     fs.readFile(filename[0], 'utf8', (_err, data) => {
-      if (checkFileVersion(data) === 'v0.0.1') {
+      if (fileVersionMatchesCurrent(data)) {
         try {
           loadDataIntoWorkspace(filename[0], data, mainWindow, darwin);
         } catch {

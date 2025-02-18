@@ -21,7 +21,7 @@ import path from 'path';
 import MenuBuilder, { save } from './menu';
 import store from './store';
 import {
-  checkFileVersion,
+  fileVersionMatchesCurrent,
   convertMidstFile,
   getNewMidstFilename,
   includeVersionInfo,
@@ -126,7 +126,7 @@ const createWindow = async () => {
     const darwin = process.platform === 'darwin';
     if (earlyPath !== '') {
       fs.readFile(earlyPath, 'utf8', (_err, data) => {
-        if (checkFileVersion(data) === 'v0.0.1') {
+        if (fileVersionMatchesCurrent(data)) {
           try {
             if (mainWindow === null) return;
             loadDataIntoWorkspace(earlyPath, data, mainWindow, darwin);
