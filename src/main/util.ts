@@ -77,14 +77,15 @@ export function resolveHtmlPath(htmlFileName: string) {
   return `file://${path.resolve(__dirname, '../renderer/', htmlFileName)}`;
 }
 
-export const CURRENT_VERSION = 'v0.0.1';
+const CURRENT_VERSION = '1';
+const CURRENT_VERSION_LIST = ['1', 'v0.0.1'];
 
-export const checkFileVersion = (data: String) => {
+export const getFileVersion = (data: string) => {
   try {
     const rows = data.split('\n');
     return rows[0].split(': ')[1];
   } catch {
-    return null;
+    return '';
   }
 };
 
@@ -93,6 +94,11 @@ export const stripVersionInfo = (data: string) => {
 };
 export const includeVersionInfo = (data: string) => {
   return `midstVersion: ${CURRENT_VERSION}\n${data}`;
+};
+
+export const fileVersionMatchesCurrent = (data: string) => {
+  const firstVersion = getFileVersion(data);
+  return CURRENT_VERSION_LIST.includes(firstVersion);
 };
 
 const getTextLengthFromJSONContent = (doc: JSONContent): number => {
