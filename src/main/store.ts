@@ -2,21 +2,33 @@ import Store from 'electron-store';
 
 // const schema = {
 //   filename: {
-//     type: 'string',
+//     type: string,
+//     default: '',
+//   },
+//  baseFilename: {
+//     type: string,
 //     default: '',
 //   },
 //   poem: {
-//     type: 'string',
+//     type: string,
 //     default: '',
 //   },
 //   history: {
-//     type: 'string',
+//     type: string,
 //     default: '[]',
 //   },
+//   edited: {
+//     type: string,
+//     default: 'false',
+//   },
 //   font-size: {
-//     type: 'string',
-//     default: 'md',
-// }
+//     type: string,
+//     default: '2',
+//   },
+//   spellcheck: {
+//     type: string,
+//     default: 'false',
+//   },
 // };
 
 const store = new Store();

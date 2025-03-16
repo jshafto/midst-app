@@ -65,7 +65,7 @@ const decreaseFontSize = (mainWindow: BrowserWindow) => {
     return;
   }
   store.set('font-size', String(fontSize - 1));
-  mainWindow.webContents.send('set-font-size', fontSize - 1);
+  mainWindow.webContents.send('set-font-size', String(fontSize - 1));
 };
 
 export const save = async (mainWindow: BrowserWindow, darwin: boolean) => {
