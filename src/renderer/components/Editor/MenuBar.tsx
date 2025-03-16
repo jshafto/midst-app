@@ -15,9 +15,9 @@ const MenuBar = () => {
     return null;
   }
 
-  const restoreSizeClassSetting = Number(
-    window.electron.store.get('font-size')
-  );
+  const restoreSizeClassSetting = window.electron.store.get('font-size')
+    ? Number(window.electron.store.get('font-size'))
+    : 2;
   const [sizeClass, setSizeClass] = useState<number>(
     [0, 1, 2, 3, 4].includes(restoreSizeClassSetting)
       ? restoreSizeClassSetting

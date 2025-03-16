@@ -172,11 +172,12 @@ const createWindow = async () => {
     mainWindow = null;
   });
   mainWindow.on('close', (event) => {
+    const clearableStoreKeys = ['filename', 'baseFilename', 'poem', 'history'];
     if (store.get('edited') === 'false') {
-      const oldFontSetting = store.get('font-size');
-      store.clear();
+      clearableStoreKeys.forEach((keyName) => {
+        store.delete(keyName);
+      });
       store.set('edited', 'false');
-      store.set('font-size', oldFontSetting);
       return;
     }
 
@@ -201,10 +202,10 @@ const createWindow = async () => {
     if (choice === 0) {
       // If the user selects "Quit Anyway", forces the window to close
       // and removes the file from the store
-      const oldFontSetting = store.get('font-size');
-      store.clear();
+      clearableStoreKeys.forEach((keyName) => {
+        store.delete(keyName);
+      });
       store.set('edited', 'false');
-      store.set('font-size', oldFontSetting);
       if (mainWindow === null) return;
       mainWindow.destroy();
     }
