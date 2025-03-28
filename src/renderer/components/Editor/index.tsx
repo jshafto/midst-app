@@ -27,16 +27,10 @@ const extensions = [
   HandleTab,
 ];
 
-// interface Props {
-//   editorClass: string;
-//   age: number;
-// }
-
-// type EditorProps = React.ComponentProps<typeof >
-
 export default function Editor() {
   const theme = useTheme();
   const navigate = useNavigate();
+  const [edited, setEdited] = useState<Boolean>(false);
 
   const [autosaveTimeout, setAutostateTimeout] = useState<
     NodeJS.Timeout | number | undefined
@@ -50,8 +44,11 @@ export default function Editor() {
     ? 'editor-height-tall'
     : 'editor-height-short';
 
-  const saveFile = () => {
+  const saveFileAndUpdateStore = () => {
+    window.electron.store.set('poem', htmlString);
+    window.electron.store.set('history', JSON.stringify(poemHistory));
     window.electron.ipcRenderer.sendMessage('save-file', []);
+    setEdited(false);
   };
 
   const restoreText = window.electron.store.get('poem') || '';
@@ -70,13 +67,14 @@ export default function Editor() {
     const newHistory = [...poemHistory, newChange];
     setPoemHistory(newHistory);
     setHtmlString(newHtml);
-    window.electron.store.set('poem', newHtml);
-    window.electron.store.set('history', JSON.stringify(newHistory));
-    window.electron.store.set('edited', JSON.stringify(true));
+    if (edited === false) {
+      setEdited(true);
+      window.electron.store.set('edited', JSON.stringify(true));
+    }
 
     // cancel current autosave interval and set new one
     clearTimeout(autosaveTimeout);
-    const newTimeout = setTimeout(saveFile, 1000);
+    const newTimeout = setTimeout(saveFileAndUpdateStore, 1000);
     setAutostateTimeout(newTimeout);
   };
   const onBlur = ({ editor }: { editor: EditorType }) => {
@@ -97,13 +95,6 @@ export default function Editor() {
       }
     );
 
-    const removeToggleEdit = window.electron.ipcRenderer.on(
-      'toggle-edit-mode',
-      () => {
-        navigate('/replay');
-      }
-    );
-
     const removeToggleSpellcheck = window.electron.ipcRenderer.on(
       'toggle-spellcheck',
       () => {
@@ -114,10 +105,23 @@ export default function Editor() {
     );
     return () => {
       removeOpen();
-      removeToggleEdit();
       removeToggleSpellcheck();
     };
   }, []);
+
+  useEffect(() => {
+    const removeToggleEdit = window.electron.ipcRenderer.on(
+      'toggle-edit-mode',
+      () => {
+        saveFileAndUpdateStore();
+        navigate('/replay');
+      }
+    );
+    return () => {
+      removeToggleEdit();
+      clearTimeout(autosaveTimeout);
+    };
+  }, [htmlString, poemHistory, autosaveTimeout]);
 
   const onCreate = ({ editor }: { editor: EditorType }) => {
     editor.commands.focus();
