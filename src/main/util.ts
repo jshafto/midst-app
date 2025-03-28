@@ -1,6 +1,5 @@
 /* eslint import/prefer-default-export: off */
 import { BrowserWindow } from 'electron';
-import { parse } from 'node-html-parser';
 import path from 'path';
 import { ChangeObj } from 'renderer/tracking/utils';
 import { URL } from 'url';
