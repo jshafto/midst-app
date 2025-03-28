@@ -362,12 +362,12 @@ export default class MenuBuilder {
         },
         {
           label: 'Increase text size',
-          accelerator: 'Command+Shift+=',
+          accelerator: 'Command+=',
           click: () => increaseFontSize(this.mainWindow),
         },
         {
           label: 'Decrease text size',
-          accelerator: 'Command+Shift+-',
+          accelerator: 'Command+-',
           click: () => decreaseFontSize(this.mainWindow),
         },
       ],
@@ -532,12 +532,12 @@ export default class MenuBuilder {
                 },
                 {
                   label: 'Increase text size',
-                  accelerator: 'Ctrl+Shift+=',
+                  accelerator: 'Ctrl+=',
                   click: () => increaseFontSize(this.mainWindow),
                 },
                 {
                   label: 'Decrease text size',
-                  accelerator: 'Ctrl+Shift+-',
+                  accelerator: 'Ctrl+-',
                   click: () => decreaseFontSize(this.mainWindow),
                 },
               ]
@@ -553,12 +553,12 @@ export default class MenuBuilder {
                 },
                 {
                   label: 'Increase text size',
-                  accelerator: 'Ctrl+Shift+=',
+                  accelerator: 'Ctrl+=',
                   click: () => increaseFontSize(this.mainWindow),
                 },
                 {
                   label: 'Decrease text size',
-                  accelerator: 'Ctrl+Shift+-',
+                  accelerator: 'Ctrl+-',
                   click: () => decreaseFontSize(this.mainWindow),
                 },
               ],
