@@ -5,12 +5,13 @@ import { useTheme } from '@mui/material/styles';
 import { Editor as EditorType } from '@tiptap/core';
 import { EditorProvider } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { HandleTab } from '../../HandleTab';
 import { ChangeObj, compareStrings } from '../../tracking/utils';
 import './Editor.css';
 import MenuBar from './MenuBar';
+import { TextContext, HistoryContext } from 'renderer/context';
 
 const extensions = [
   StarterKit.configure({
@@ -28,6 +29,7 @@ const extensions = [
 ];
 
 export default function Editor() {
+  const [myEditor, setMyEditor] = useState<EditorType | null>(null);
   const theme = useTheme();
   const navigate = useNavigate();
   const [edited, setEdited] = useState<Boolean>(false);
@@ -50,13 +52,15 @@ export default function Editor() {
     window.electron.ipcRenderer.sendMessage('save-file', []);
     setEdited(false);
   };
+  useEffect(() => {
+    window.electron.ipcRenderer.sendMessage('enable-save', []);
+    return () => {
+      window.electron.ipcRenderer.sendMessage('disable-save', []);
+    };
+  }, []);
 
-  const restoreText = window.electron.store.get('poem') || '';
-  const restoreHistory = window.electron.store.get('history')
-    ? JSON.parse(window.electron.store.get('history'))
-    : [];
-  const [htmlString, setHtmlString] = useState(restoreText);
-  const [poemHistory, setPoemHistory] = useState<ChangeObj[]>(restoreHistory);
+  const { text: htmlString, setText: setHtmlString } = useContext(TextContext);
+  const { poemHistory, setPoemHistory } = useContext(HistoryContext);
   const onUpdate = ({ editor }: { editor: EditorType }) => {
     const newHtml = editor.getHTML();
     const pos = editor.state.selection.$anchor.pos;
@@ -84,18 +88,22 @@ export default function Editor() {
   };
 
   useEffect(() => {
+    saveFileAndUpdateStore();
     const removeOpen = window.electron.ipcRenderer.on(
       'open-file',
-      (savedPoem, savedHistory) => {
-        const strPoem = savedPoem as string;
-        const strHistory = savedHistory as ChangeObj[];
-        setHtmlString(strPoem);
-        setPoemHistory(strHistory);
-        window.location.reload();
+      (savedPoem, savedHistory, savedFilename) => {
+        setHtmlString(savedPoem as string);
+
+        setPoemHistory(savedHistory as ChangeObj[]);
+        window.electron.titlebar.updateTitle(savedFilename as string);
+        if (myEditor) {
+          myEditor.commands.setContent(savedPoem as string);
+        }
+        navigate('/editor');
       }
     );
 
-    const removeToggleSpellcheck = window.electron.ipcRenderer.on(
+    const removeToggleSpellcheckHandler = window.electron.ipcRenderer.on(
       'toggle-spellcheck',
       () => {
         setSpellcheckOn(!spellcheckOn);
@@ -105,9 +113,9 @@ export default function Editor() {
     );
     return () => {
       removeOpen();
-      removeToggleSpellcheck();
+      removeToggleSpellcheckHandler();
     };
-  }, []);
+  }, [myEditor]);
 
   useEffect(() => {
     const removeToggleEdit = window.electron.ipcRenderer.on(
@@ -125,6 +133,7 @@ export default function Editor() {
 
   const onCreate = ({ editor }: { editor: EditorType }) => {
     editor.commands.focus();
+    setMyEditor(editor);
   };
 
   const restoreSizeClassSetting = window.electron.store.get('font-size')
@@ -146,7 +155,7 @@ export default function Editor() {
       <EditorProvider
         slotBefore={<MenuBar />}
         extensions={extensions}
-        content={restoreText}
+        content={htmlString}
         onUpdate={onUpdate}
         onBlur={onBlur}
         editorProps={{

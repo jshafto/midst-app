@@ -1,5 +1,5 @@
 import './Replay.css';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useContext } from 'react';
 import { reconstructHTML, ChangeObj } from 'renderer/tracking/utils';
 import Slider from '@mui/material/Slider';
 import Tooltip from '@mui/material/Tooltip';
@@ -16,6 +16,7 @@ import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import TextIncreaseIcon from '@mui/icons-material/TextIncrease';
 import TextDecreaseIcon from '@mui/icons-material/TextDecrease';
+import { HistoryContext, TextContext } from 'renderer/context';
 
 const extensions = [
   StarterKit.configure({
@@ -34,12 +35,11 @@ const extensions = [
 export default function Replay() {
   const theme = useTheme();
   const navigate = useNavigate();
-  const restoreHistory = window.electron.store.get('history')
-    ? JSON.parse(window.electron.store.get('history'))
-    : [];
-  const [history, setHistory] = useState<ChangeObj[]>(restoreHistory);
+
+  const { poemHistory, setPoemHistory } = useContext(HistoryContext);
+  const { setText: setHtmlString } = useContext(TextContext);
   const [maxStep, setMaxStep] = useState(
-    history.length ? history.length - 1 : 0
+    poemHistory.length ? poemHistory.length - 1 : 0
   );
   const playPauseButton = useRef<HTMLButtonElement | null>(null);
 
@@ -54,7 +54,7 @@ export default function Replay() {
 
   const editor = useEditor({
     extensions,
-    content: reconstructHTML('', history, step),
+    content: reconstructHTML('', poemHistory, step),
     editable: false,
     parseOptions: {
       preserveWhitespace: true,
@@ -78,14 +78,14 @@ export default function Replay() {
       setPlaying(false);
     }
     if (!editor) return;
-    const newContent = reconstructHTML('', history, step);
+    const newContent = reconstructHTML('', poemHistory, step);
     editor.commands.setContent(newContent, false, { preserveWhitespace: true });
-    const pos = history[step]?.pos || 0;
+    const pos = poemHistory[step]?.pos || 0;
     const { node } = editor.view.domAtPos(pos !== undefined ? pos : 0);
     if (node) {
       (node as any).scrollIntoView?.({ block: 'center' });
     }
-  }, [playingInterval, maxStep, step]);
+  }, [playingInterval, maxStep, step, poemHistory]);
 
   useEffect(() => {
     // this clean up function runs when unmounted, clearing the interval
@@ -121,7 +121,9 @@ export default function Replay() {
 
   const labelFormatter = (x: number) => {
     if (x > maxStep) return '';
-    return history[x] ? format(new Date(history[x].t), 'p\n MM/dd/yy') : '';
+    return poemHistory[x]
+      ? format(new Date(poemHistory[x].t), 'p\n MM/dd/yy')
+      : '';
   };
   const handleClickPause = () => {
     clearInterval(playingInterval);
@@ -131,27 +133,25 @@ export default function Replay() {
   useEffect(() => {
     const removeOpen = window.electron.ipcRenderer.on(
       'open-file',
-      (_savedPoem, savedHistory) => {
+      (savedPoem, savedHistory, savedFilename) => {
         clearInterval(playingInterval);
         setPlaying(false);
-        const strHistory = savedHistory as ChangeObj[];
-        setHistory(strHistory);
-        setMaxStep(strHistory.length ? strHistory.length - 1 : 0);
-        setStep(strHistory.length ? strHistory.length - 1 : 0);
-        if (!strHistory.length) {
-          navigate('/');
-        }
+        // const typeHistory = savedHistory as ChangeObj[];
+        setHtmlString(savedPoem as string);
+        setPoemHistory(savedHistory as ChangeObj[]);
+        window.electron.titlebar.updateTitle(savedFilename as string);
+        navigate('/editor');
       }
     );
 
-    const removeToggleEdit = window.electron.ipcRenderer.on(
+    const removeToggleEditHandler = window.electron.ipcRenderer.on(
       'toggle-edit-mode',
       () => {
-        navigate('/');
+        navigate('/editor');
       }
     );
 
-    const removeFontSize = window.electron.ipcRenderer.on(
+    const removeFontSizeHandler = window.electron.ipcRenderer.on(
       'set-font-size',
       (newSize) => {
         setSizeClass(Number(newSize));
@@ -160,15 +160,15 @@ export default function Replay() {
 
     return () => {
       removeOpen();
-      removeToggleEdit();
-      removeFontSize();
+      removeToggleEditHandler();
+      removeFontSizeHandler();
     };
   }, []);
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === 'Escape') {
-        navigate('/');
+        navigate('/editor');
       }
       if (e.key === 'Enter' || e.key === ' ') {
         playPauseButton.current?.click();
@@ -294,7 +294,7 @@ export default function Replay() {
             placement="top-end"
             classes={{ arrow: 'custom-arrow', tooltip: 'custom' }}
           >
-            <Link to="/">
+            <Link to="/editor">
               <button
                 type="button"
                 className="control-bar-icon"

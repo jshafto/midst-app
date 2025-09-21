@@ -126,3 +126,7 @@
 .MuiTooltip-arrow {
   color: #ffa4b9 !important;
 }
+.svg {
+  /* removes squiggle m */
+  display: block;
+}

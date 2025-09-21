@@ -72,7 +72,8 @@ export const save = async (mainWindow: BrowserWindow, darwin: boolean) => {
   let filename: string | undefined = store.get('filename') as string;
   if (!filename) {
     filename = dialog.showSaveDialogSync(mainWindow, {
-      title: 'Save File…',
+      title: 'To begin, create a new Midst document.',
+      message: 'To begin, create a new Midst document.',
       filters: [
         { name: 'Midst', extensions: ['midst'] },
         { name: 'All Files', extensions: ['*'] },
@@ -104,7 +105,8 @@ export const save = async (mainWindow: BrowserWindow, darwin: boolean) => {
 
 export const saveAs = async (mainWindow: BrowserWindow, darwin: boolean) => {
   const filename = dialog.showSaveDialogSync(mainWindow, {
-    title: 'Save File As…',
+    title: 'To begin, create a new Midst document.',
+    message: 'To begin, create a new Midst document.',
     filters: [
       { name: 'Midst', extensions: ['midst'] },
       { name: 'All Files', extensions: ['*'] },
@@ -190,6 +192,7 @@ export const openFile = async (mainWindow: BrowserWindow, darwin: boolean) => {
           const newFileContents = convertMidstFile(data);
           const newFilename = getNewMidstFilename(filename[0]);
           fs.writeFileSync(newFilename, includeVersionInfo(newFileContents));
+          app.addRecentDocument(newFilename);
           loadDataIntoWorkspace(
             newFilename,
             includeVersionInfo(newFileContents),
@@ -294,20 +297,36 @@ export default class MenuBuilder {
           },
         },
         {
+          id: 'save',
           label: 'Save',
           accelerator: 'Command+S',
           click: () => save(this.mainWindow, true),
+          enabled: false,
         },
         {
+          id: 'save-as',
           label: 'Save As',
           accelerator: 'Command+S+Shift',
           click: () => saveAs(this.mainWindow, true),
+          enabled: false,
         },
         {
           label: 'Open',
           accelerator: 'Command+O',
           click: () => openFile(this.mainWindow, true),
         },
+        // commented this out since recent documents is not working
+        // but leaving as a starting point to debug
+        // {
+        //   label: 'Open Recent',
+        //   role: 'recentDocuments',
+        //   submenu: [
+        //     {
+        //       label: 'Clear Recent',
+        //       role: 'clearRecentDocuments',
+        //     },
+        //   ],
+        // },
       ],
     };
     const subMenuEdit: DarwinMenuItemConstructorOptions = {
@@ -447,14 +466,18 @@ export default class MenuBuilder {
         label: '&File',
         submenu: [
           {
+            id: 'save',
             label: '&Save',
             accelerator: 'Ctrl+S',
             click: () => save(this.mainWindow, false),
+            enabled: false,
           },
           {
+            id: 'save-as',
             label: '&Save As',
             accelerator: 'Ctrl+Shift+S',
             click: () => saveAs(this.mainWindow, false),
+            enabled: false,
           },
           {
             label: '&New',

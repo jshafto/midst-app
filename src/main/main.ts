@@ -18,7 +18,7 @@ import log from 'electron-log';
 import { autoUpdater } from 'electron-updater';
 import fs from 'fs';
 import path from 'path';
-import MenuBuilder, { save } from './menu';
+import MenuBuilder, { save, newFile, openFile } from './menu';
 import store from './store';
 import {
   fileVersionMatchesCurrent,
@@ -109,6 +109,34 @@ const createWindow = async () => {
     const darwin = process.platform === 'darwin';
     if (mainWindow === null) return;
     save(mainWindow, darwin);
+  });
+  ipcMain.on('new-file', async (event, arg) => {
+    const darwin = process.platform === 'darwin';
+    if (mainWindow === null) return;
+    newFile(mainWindow, darwin);
+  });
+  ipcMain.on('button-open-file', async (event) => {
+    const darwin = process.platform === 'darwin';
+    if (mainWindow === null) return;
+    openFile(mainWindow, darwin);
+  });
+
+  ipcMain.on('enable-save', async (event) => {
+    const darwin = process.platform === 'darwin';
+    if (mainWindow === null) return;
+    const saveMenuItem = app.applicationMenu?.getMenuItemById('save');
+    if (saveMenuItem) {
+      saveMenuItem.enabled = true;
+    }
+  });
+
+  ipcMain.on('disable-save', async (event) => {
+    const darwin = process.platform === 'darwin';
+    if (mainWindow === null) return;
+    const saveMenuItem = app.applicationMenu?.getMenuItemById('save');
+    if (saveMenuItem) {
+      saveMenuItem.enabled = false;
+    }
   });
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
