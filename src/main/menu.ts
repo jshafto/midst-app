@@ -100,13 +100,15 @@ export const save = async (mainWindow: BrowserWindow, darwin: boolean) => {
 
     fs.writeFile(filename, fullContents, () => {});
     store.set('edited', JSON.stringify(false));
+  } else {
+    mainWindow.webContents.send('cancel-save');
   }
 };
 
 export const saveAs = async (mainWindow: BrowserWindow, darwin: boolean) => {
   const filename = dialog.showSaveDialogSync(mainWindow, {
-    title: 'To begin, create a new Midst document.',
-    message: 'To begin, create a new Midst document.',
+    title: 'Save file as...',
+    message: 'Save file as...',
     filters: [
       { name: 'Midst', extensions: ['midst'] },
       { name: 'All Files', extensions: ['*'] },
@@ -153,29 +155,40 @@ export const newFile = (mainWindow: BrowserWindow, darwin: boolean) => {
   }
 };
 
-export const openFile = async (mainWindow: BrowserWindow, darwin: boolean) => {
+export const openFile = async (
+  mainWindow: BrowserWindow,
+  darwin: boolean,
+  earlyFilename?: string[]
+) => {
   const cancel = handleUnsavedChanges(mainWindow);
   if (cancel) {
     return;
   }
-  const filename = dialog.showOpenDialogSync(mainWindow, {
-    title: 'Open...',
-    filters: [
-      { name: 'Midst', extensions: ['midst'] },
-      { name: 'All Files', extensions: ['*'] },
-    ],
-  });
+  let filename: string[] | undefined;
+  if (earlyFilename) {
+    filename = earlyFilename;
+  } else {
+    filename = dialog.showOpenDialogSync(mainWindow, {
+      title: 'Open...',
+      filters: [
+        { name: 'Midst', extensions: ['midst'] },
+        { name: 'All Files', extensions: ['*'] },
+      ],
+    });
+  }
 
   if (filename?.length) {
     fs.readFile(filename[0], 'utf8', (_err, data) => {
       if (fileVersionMatchesCurrent(data)) {
         try {
-          loadDataIntoWorkspace(filename[0], data, mainWindow, darwin);
+          loadDataIntoWorkspace(filename![0], data, mainWindow, darwin);
         } catch {
           dialog.showMessageBoxSync(mainWindow, {
             title: `Error`,
             type: 'error',
-            message: `The file ${filename[0]} could not be opened. File may be corrupted. Please select another file and try again.`,
+            message: `The file ${
+              filename![0]
+            } could not be opened. File may be corrupted. Please select another file and try again.`,
           });
         }
       } else {
@@ -190,7 +203,7 @@ export const openFile = async (mainWindow: BrowserWindow, darwin: boolean) => {
         });
         if (response === 1) {
           const newFileContents = convertMidstFile(data);
-          const newFilename = getNewMidstFilename(filename[0]);
+          const newFilename = getNewMidstFilename(filename![0]);
           fs.writeFileSync(newFilename, includeVersionInfo(newFileContents));
           app.addRecentDocument(newFilename);
           loadDataIntoWorkspace(

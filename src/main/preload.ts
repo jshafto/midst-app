@@ -15,9 +15,12 @@ export type Channels =
   | 'save-file'
   | 'toggle-spellcheck'
   | 'new-file'
+  | 'new-file-from-menu'
   | 'button-open-file'
   | 'enable-save'
-  | 'disable-save';
+  | 'disable-save'
+  | 'cancel-save'
+  | 'app-open';
 
 let titlebar: CustomTitlebar | null = null;
 

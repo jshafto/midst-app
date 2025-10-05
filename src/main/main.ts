@@ -13,7 +13,14 @@ import {
   setupTitlebar,
 } from '@jshafto/custom-electron-titlebar-update/main';
 
-import { app, BrowserWindow, dialog, ipcMain, shell } from 'electron';
+import {
+  app,
+  BrowserWindow,
+  dialog,
+  ipcMain,
+  IpcMainEvent,
+  shell,
+} from 'electron';
 import log from 'electron-log';
 import { autoUpdater } from 'electron-updater';
 import fs from 'fs';
@@ -121,12 +128,24 @@ const createWindow = async () => {
     openFile(mainWindow, darwin);
   });
 
+  ipcMain.on('app-open', (filename: IpcMainEvent) => {
+    console.log('inside ipcmain open-file', filename);
+    const darwin = process.platform === 'darwin';
+    console.log(filename, 'filename main.ts');
+    if (mainWindow === null) return;
+    openFile(mainWindow, darwin, filename as unknown as string[]);
+  });
+
   ipcMain.on('enable-save', async (event) => {
     const darwin = process.platform === 'darwin';
     if (mainWindow === null) return;
     const saveMenuItem = app.applicationMenu?.getMenuItemById('save');
     if (saveMenuItem) {
       saveMenuItem.enabled = true;
+    }
+    const saveAsMenuItem = app.applicationMenu?.getMenuItemById('save-as');
+    if (saveAsMenuItem) {
+      saveAsMenuItem.enabled = true;
     }
   });
 
@@ -136,6 +155,10 @@ const createWindow = async () => {
     const saveMenuItem = app.applicationMenu?.getMenuItemById('save');
     if (saveMenuItem) {
       saveMenuItem.enabled = false;
+    }
+    const saveAsMenuItem = app.applicationMenu?.getMenuItemById('save-as');
+    if (saveAsMenuItem) {
+      saveAsMenuItem.enabled = false;
     }
   });
 
@@ -282,6 +305,7 @@ app.on('open-file', async (event, filename) => {
   // on other operating systems, this will need to be handled differently
   event.preventDefault();
   earlyPath = filename;
+  ipcMain.emit('app-open', [earlyPath]);
 });
 
 app

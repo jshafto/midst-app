@@ -47,18 +47,28 @@ export default function Editor() {
     : 'editor-height-short';
 
   const saveFileAndUpdateStore = () => {
+    console.log('saveFileAndUpdateStore');
     window.electron.store.set('poem', htmlString);
     window.electron.store.set('history', JSON.stringify(poemHistory));
     window.electron.ipcRenderer.sendMessage('save-file', []);
     setEdited(false);
   };
   useEffect(() => {
+    saveFileAndUpdateStore();
+    const removeCancelSave = window.electron.ipcRenderer.on(
+      'cancel-save',
+      () => {
+        navigate('/');
+      }
+    );
     window.electron.ipcRenderer.sendMessage('enable-save', []);
     return () => {
+      removeCancelSave();
       window.electron.ipcRenderer.sendMessage('disable-save', []);
     };
   }, []);
 
+  // const { filename, setFilename } = useContext(FilenameContext);
   const { text: htmlString, setText: setHtmlString } = useContext(TextContext);
   const { poemHistory, setPoemHistory } = useContext(HistoryContext);
   const onUpdate = ({ editor }: { editor: EditorType }) => {
@@ -88,7 +98,12 @@ export default function Editor() {
   };
 
   useEffect(() => {
-    saveFileAndUpdateStore();
+    const removeCancelSave = window.electron.ipcRenderer.on(
+      'cancel-save',
+      () => {
+        navigate('/');
+      }
+    );
     const removeOpen = window.electron.ipcRenderer.on(
       'open-file',
       (savedPoem, savedHistory, savedFilename) => {
@@ -99,6 +114,7 @@ export default function Editor() {
         if (myEditor) {
           myEditor.commands.setContent(savedPoem as string);
         }
+        saveFileAndUpdateStore();
         navigate('/editor');
       }
     );
@@ -111,7 +127,9 @@ export default function Editor() {
         window.location.reload();
       }
     );
+
     return () => {
+      removeCancelSave();
       removeOpen();
       removeToggleSpellcheckHandler();
     };
